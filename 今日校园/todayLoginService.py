@@ -49,21 +49,27 @@ class TodayLoginService:
                 idsUrl = data['idsUrl']
                 ampUrl = data['ampUrl']
                 if 'campusphere' in ampUrl or 'cpdaily' in ampUrl:
+                    self.host = re.findall('\w{4,5}\:\/\/.*?\/', ampUrl)[0]
+                    status_code = 0
+                    while status_code != 200:
+                        newAmpUrl = self.session.get(ampUrl, allow_redirects=False, verify=False)
+                        status_code = newAmpUrl.status_code
+                        if 'Location' in newAmpUrl.headers:
+                            ampUrl = newAmpUrl.headers['Location']
                     parse = urlparse(ampUrl)
                     host = parse.netloc
-                    res = self.session.get(parse.scheme + '://' + host)
-                    self.login_url = idsUrl + '/login?service=' + parse.scheme + r"%3A%2F%2F" + host + r'%2Fportal%2Flogin'
+                    self.login_url = ampUrl
                     self.login_host = re.findall('\w{4,5}\:\/\/.*?\/', self.login_url)[0]
-                    self.host = re.findall('\w{4,5}\:\/\/.*?\/', ampUrl)[0]
                 ampUrl2 = data['ampUrl2']
                 if 'campusphere' in ampUrl2 or 'cpdaily' in ampUrl2:
+                    self.host = re.findall('\w{4,5}\:\/\/.*?\/', ampUrl2)[0]
                     parse = urlparse(ampUrl2)
                     host = parse.netloc
                     res = self.session.get(parse.scheme + '://' + host)
                     parse = urlparse(res.url)
                     self.login_url = idsUrl + '/login?service=' + parse.scheme + r"%3A%2F%2F" + host + r'%2Fportal%2Flogin'
                     self.login_host = re.findall('\w{4,5}\:\/\/.*?\/', self.login_url)[0]
-                    self.host = re.findall('\w{4,5}\:\/\/.*?\/', ampUrl2)[0]
+
                 break
 
     # 通过登陆url判断采用哪种登陆方式

@@ -13,6 +13,8 @@ class RlMessage:
         # 若离邮件api， 将会存储消息到数据库，并保存1周以供查看，请勿乱用，谢谢合作
         if self.mail == '':
             return '邮箱为空，已取消发送邮件！'
+        if self.apiUrl == '':
+            return '邮件API为空，设置邮件API后才能发送邮件'
         params = {
             'to': self.mail,
             'title': f'[{status}]今日校园通知',

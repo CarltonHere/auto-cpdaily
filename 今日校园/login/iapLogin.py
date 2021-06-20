@@ -60,4 +60,4 @@ class iapLogin:
             elif data['resultCode'] == 'FAIL_UPNOTMATCH':
                 raise Exception('用户名密码不匹配，请检查')
             else:
-                raise Exception('登陆出错，请联系开发者修复...')
+                raise Exception(f'登陆出错，状态码：{ data["resultCode"]}，请联系开发者修复...')

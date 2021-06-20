@@ -3,7 +3,7 @@ author: 若离QQ：2909998156
 # 特别提示：调试完成后请记得将debug改为false
 # 特别提示：调试完成后请记得将debug改为false
 # 特别提示：调试完成后请记得将debug改为false
-debug: true
+debug: false
 # 邮箱API的地址
 emailApiUrl: ''
 

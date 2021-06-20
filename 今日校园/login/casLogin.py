@@ -1,8 +1,10 @@
+import json
 import re
 import requests
 from bs4 import BeautifulSoup
 from urllib3.exceptions import InsecureRequestWarning
 from login.Utils import Utils
+
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 
@@ -34,7 +36,7 @@ class casLogin:
         for item in form:
             if None != item.get('name') and len(item.get('name')) > 0:
                 if item.get('name') != 'rememberMe':
-                    if (None == item.get('value')):
+                    if None == item.get('value'):
                         params[item.get('name')] = ''
                     else:
                         params[item.get('name')] = item.get('value')
