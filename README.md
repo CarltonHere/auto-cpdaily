@@ -2,13 +2,11 @@
 
 
 
-#### 博客教程：[https://blog.ruoli.cc/archives/29.html](https://blog.ruoli.cc/archives/29.html)
+#### 博客教程：[https://blog.itruoli.com/archives/29.html](https://blog.ruoli.cc/archives/29.html)
 
 #### 视频教程：[https://pan.ruoli.cc/nanjing/video/fucktoday/](https://pan.ruoli.cc/nanjing/video/fucktoday/)
 
 #### 小声BB：求求大哥们给个star吧
-
-#### 温馨提示：域名重新备案中，预计5月5日左右完成，期间网站无法访问，邮件API无法发送，会报错，请把debug改为false
 
 #### 1、本地化登陆
 
