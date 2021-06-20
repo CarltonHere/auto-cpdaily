@@ -2,7 +2,7 @@
 
 
 
-#### 博客教程：[https://blog.itruoli.com/archives/29.html](https://blog.ruoli.cc/archives/29.html)
+#### 博客教程：[https://blog.itruoli.com/archives/29.html](https://blog.itruoli.com/archives/29.html)
 
 #### 视频教程：[https://pan.ruoli.cc/nanjing/video/fucktoday/](https://pan.ruoli.cc/nanjing/video/fucktoday/)
 
