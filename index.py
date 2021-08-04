@@ -4,7 +4,8 @@ from actions.autoSign import AutoSign
 from actions.collection import Collection
 from actions.workLog import workLog
 from actions.sleepCheck import sleepCheck
-from actions.rlMessage import RlMessage
+from actions.pushKit import pushKit
+from datetime import datetime, timedelta, timezone
 
 
 def getYmlConfig(yaml_file='config.yml'):
@@ -15,21 +16,37 @@ def getYmlConfig(yaml_file='config.yml'):
     return dict(config)
 
 
+def getTimeStr():
+    utc_dt = datetime.utcnow().replace(tzinfo=timezone.utc)
+    bj_dt = utc_dt.astimezone(timezone(timedelta(hours=8)))
+    return bj_dt.strftime("%Y-%m-%d %H:%M:%S")
+
+
 def main():
     config = getYmlConfig()
+    push = pushKit(config['notifyOption'])
     for user in config['users']:
-        rl = RlMessage(user['user']['email'], config['emailApiUrl'])
         if config['debug']:
             msg = working(user)
         else:
             try:
                 msg = working(user)
+                ret = True
             except Exception as e:
                 msg = str(e)
-                print(msg)
-                msg = rl.sendMail('error', msg)
-        print(msg)
-        msg = rl.sendMail('maybe', msg)
+                ret = False
+            print(msg)
+            ntm = getTimeStr()
+            if ret == True:
+                #此处需要注意就算提示成功也不一定是真的成功，以实际为准
+                msg = push.sendMail('今日校园签到成功通知', f'服务器于{ntm}尝试签到成功!',
+                                    user['user']['email'])
+            else:
+                msg = push.sendMail('今日校园签到失败通知',
+                                    f'服务器于{ntm}尝试签到失败!\n错误信息:{msg}',
+                                    user['user']['email'])
+            print(msg)
+
 
 def working(user):
     today = TodayLoginService(user['user'])
@@ -67,6 +84,8 @@ def working(user):
         work.fillForms()
         msg = work.submitForms()
         return msg
+
+
 # 阿里云的入口函数
 def handler(event, context):
     main()
@@ -75,7 +94,7 @@ def handler(event, context):
 # 腾讯云的入口函数
 def main_handler(event, context):
     main()
-    return 'ok'
+    return '签到任务执行完毕'
 
 
 if __name__ == '__main__':
