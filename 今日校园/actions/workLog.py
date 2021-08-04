@@ -61,10 +61,10 @@ class workLog:
     # 填充表单
     def fillForms(self):
         userItems = self.userInfo['forms']
-        for form in self.forms[:]:
+        for pos, form in enumerate(self.forms[:]):
             # 由于无法判断有没有签到选项，使用个i来作为下标索引
             i = 0
-            for pos, formItem in enumerate(form):
+            for formItem in form:
                 # 只填写必填项
                 if formItem['isRequired']:
                     # 判断一下是否是签到选项
