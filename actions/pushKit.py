@@ -32,17 +32,23 @@ class pushKit:
 
         # smtp本地邮件接口
     def sendMailByLocal(self, mail, title, msg):
-        if mail == '':
-            return '邮箱为空，已取消发送邮件！'
         ret = "邮件发送成功"
         try:
+            if mail == '':
+                return '邮箱为空，已取消发送邮件！'
             # 发信方的信息：发信邮箱，邮箱授权码
-            from_addr = self.option['smtpAcc']['userName']  # 发信方邮箱账号
-            password = self.option['smtpAcc']['passWord']  # 发信方邮箱密码
+            from_addr = self.option['smtpOption']['userName']  # 发信方邮箱账号
+            password = self.option['smtpOption']['passWord']  # 发信方邮箱密码
+            if from_addr == '':
+                return '发信邮箱地址为空，已取消发送邮件！'
+            if password == '':
+                return '发信邮箱密码为空，已取消发送邮件！'
             # 收信方邮箱
             to_addr = mail
             # 发信服务器
-            smtp_server = 'smtp.163.com'
+            smtp_server = self.option['smtpOption']['server']
+            if smtp_server == '':
+                return '发信邮箱服务器为空，已取消发送邮件！'
             # 邮箱正文内容，第一个参数为内容，第二个参数为格式(plain 为纯文本)，第三个参数为编码
             msg = MIMEText(msg, 'plain', 'utf-8')
             # 邮件头信息

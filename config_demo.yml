@@ -8,9 +8,10 @@ debug: False
 notifyOption:
     method: 0
     apiUrl: ''
-    smtpAcc:
+    smtpOption: #############发信方邮箱账号密码,smtp服务器qq邮箱为smtp.qq.com,163邮箱为smtp.163.com
         userName: ''
         passWord: ''
+        server: 'smtp.163.com'
 
 #用户组配置
 ##################################################
