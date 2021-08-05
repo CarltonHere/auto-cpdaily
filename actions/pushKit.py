@@ -47,8 +47,8 @@ class pushKit:
             msg = MIMEText(msg, 'plain', 'utf-8')
             # 邮件头信息
             h = Header('今日校园', 'utf-8')
-            # 允许自定义发信邮箱地址，默认关闭
-            #h.append(f'<888888@163.com>', 'ascii')
+            # 允许自定义发信邮箱地址，需注意收信方安全策略问题
+            h.append(from_addr, 'ascii')
             msg['From'] = h
             msg['To'] = Header(to_addr)
             msg['Subject'] = Header(title)

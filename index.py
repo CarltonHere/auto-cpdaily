@@ -23,6 +23,7 @@ def getTimeStr():
 
 
 def main():
+    print("签到任务开始执行")
     config = getYmlConfig()
     push = pushKit(config['notifyOption'])
     for user in config['users']:
