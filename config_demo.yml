@@ -5,6 +5,7 @@ author: 若离QQ：2909998156
 # 特别提示：调试完成后请记得将debug改为false
 debug: False
 # 消息推送配置，method 0 为禁用 1 为webApi模式 2 为本地smtp模式
+# webApi模式只填写apiUrl项即可,smtp模式只填写smtpOption项即可
 notifyOption:
     method: 0
     apiUrl: ''
