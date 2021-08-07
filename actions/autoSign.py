@@ -112,12 +112,14 @@ class AutoSign:
                         flag =True
                         extraFieldItemValue = {'extraFieldItemValue': userItem['value'],
                                                'extraFieldItemWid': extraFieldItem['wid']}
+                        extraFieldItemValues.append(extraFieldItemValue)
                     # 其他 额外的文本
                     if extraFieldItem['isOtherItems'] == 1:
                         flag = True
                         extraFieldItemValue = {'extraFieldItemValue': userItem['value'],
                                                'extraFieldItemWid': extraFieldItem['wid']}
-                    extraFieldItemValues.append(extraFieldItemValue)
+                        extraFieldItemValues.append(extraFieldItemValue)
+                    ####此处可能存在未解决问题，后续持续观察
                 if not flag:
                     raise Exception(f'\r\n第{ i + 1 }个配置出错了\r\n表单未找到你设置的值：{userItem["value"]}\r\n，你上次系统选的值为：{ data }')
             self.form['extraFieldItems'] = extraFieldItemValues
