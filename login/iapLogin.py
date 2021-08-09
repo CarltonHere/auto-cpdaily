@@ -1,12 +1,5 @@
-import base64
 import json
-from io import BytesIO
 import requests
-from tencentcloud.common import credential
-from tencentcloud.common.profile.client_profile import ClientProfile
-from tencentcloud.common.profile.http_profile import HttpProfile
-from tencentcloud.common.exception.tencent_cloud_sdk_exception import TencentCloudSDKException
-from tencentcloud.ocr.v20181119 import ocr_client, models
 from urllib3.exceptions import InsecureRequestWarning
 from login.Utils import Utils
 

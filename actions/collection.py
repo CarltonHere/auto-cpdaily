@@ -3,15 +3,14 @@ import json
 import re
 import uuid
 from pyDes import PAD_PKCS5, des, CBC
-
-from todayLoginService import TodayLoginService
+from login.wiseLoginService import wiseLoginService
 
 
 class Collection:
     # 初始化信息收集类
-    def __init__(self, todaLoginService: TodayLoginService, userInfo):
-        self.session = todaLoginService.session
-        self.host = todaLoginService.host
+    def __init__(self, wiseLoginService: wiseLoginService, userInfo):
+        self.session = wiseLoginService.session
+        self.host = wiseLoginService.campus_host
         self.userInfo = userInfo
         self.form = None
         self.collectWid = None
@@ -23,22 +22,33 @@ class Collection:
         headers = self.session.headers
         headers['Content-Type'] = 'application/json'
         queryUrl = f'{self.host}wec-counselor-collector-apps/stu/collector/queryCollectorProcessingList'
-        params = {
-            'pageSize': 6,
-            "pageNumber": 1
-        }
-        res = self.session.post(queryUrl, data=json.dumps(params), headers=headers, verify=False).json()
+        params = {'pageSize': 6, "pageNumber": 1}
+        res = self.session.post(queryUrl,
+                                data=json.dumps(params),
+                                headers=headers,
+                                verify=False).json()
         if len(res['datas']['rows']) < 1:
             raise Exception('查询表单失败，请确认你是信息收集并且当前有收集任务。确定请联系开发者')
         self.collectWid = res['datas']['rows'][0]['wid']
         self.formWid = res['datas']['rows'][0]['formWid']
         detailUrl = f'{self.host}wec-counselor-collector-apps/stu/collector/detailCollector'
-        res = self.session.post(detailUrl, headers=headers, data=json.dumps({'collectorWid': self.collectWid}),
+        res = self.session.post(detailUrl,
+                                headers=headers,
+                                data=json.dumps(
+                                    {'collectorWid': self.collectWid}),
                                 verify=False).json()
         self.schoolTaskWid = res['datas']['collector']['schoolTaskWid']
         getFormUrl = f'{self.host}wec-counselor-collector-apps/stu/collector/getFormFields'
-        params = {"pageSize": 100, "pageNumber": 1, "formWid": self.formWid, "collectorWid": self.collectWid}
-        res = self.session.post(getFormUrl, headers=headers, data=json.dumps(params), verify=False).json()
+        params = {
+            "pageSize": 100,
+            "pageNumber": 1,
+            "formWid": self.formWid,
+            "collectorWid": self.collectWid
+        }
+        res = self.session.post(getFormUrl,
+                                headers=headers,
+                                data=json.dumps(params),
+                                verify=False).json()
         self.form = res['datas']['rows']
 
     # 填写表单
@@ -53,7 +63,8 @@ class Collection:
                     # 如果检查到标题不相等
                     if formItem['title'] != userForm['title']:
                         raise Exception(
-                            f'\r\n第{index + 1}个配置项的标题不正确\r\n您的标题为：{userForm["title"]}\r\n系统的标题为：{formItem["title"]}')
+                            f'\r\n第{index + 1}个配置项的标题不正确\r\n您的标题为：{userForm["title"]}\r\n系统的标题为：{formItem["title"]}'
+                        )
                 # 文本选项直接赋值
                 if formItem['fieldType'] == 1 or formItem['fieldType'] == 5:
                     formItem['value'] = userForm['value']
@@ -106,11 +117,18 @@ class Collection:
             'Accept-Encoding': 'gzip'
         }
         params = {
-            "formWid": self.formWid, "address": self.userInfo['address'], "collectWid": self.collectWid,
-            "schoolTaskWid": self.schoolTaskWid, "form": self.form, "uaIsCpadaily": True
+            "formWid": self.formWid,
+            "address": self.userInfo['address'],
+            "collectWid": self.collectWid,
+            "schoolTaskWid": self.schoolTaskWid,
+            "form": self.form,
+            "uaIsCpadaily": True
         }
         submitUrl = f'{self.host}wec-counselor-collector-apps/stu/collector/submitForm'
-        data = self.session.post(submitUrl, headers=headers, data=json.dumps(params), verify=False).json()
+        data = self.session.post(submitUrl,
+                                 headers=headers,
+                                 data=json.dumps(params),
+                                 verify=False).json()
         return data['message']
 
     # DES加密

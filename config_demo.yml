@@ -13,7 +13,10 @@ notifyOption:
         userName: ''
         passWord: ''
         server: 'smtp.163.com'
-
+# 默认不填，如需使用先开通腾讯云OCR服务，再申请API密钥
+ocrOption:
+    SecretId: 'APIid'
+    SecretKey: 'APIkey'
 #用户组配置
 ##################################################
 # 温馨提示：请仔细注意每个模板是属于哪个任务类型的配置！##

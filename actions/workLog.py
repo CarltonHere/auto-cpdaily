@@ -3,17 +3,15 @@ import json
 import re
 import uuid
 from pyDes import PAD_PKCS5, des, CBC
-import time
-
-from todayLoginService import TodayLoginService
+from login.wiseLoginService import wiseLoginService
 
 
 # 教师工作日志类
 class workLog:
     # 初始化顶底工作日志类
-    def __init__(self, todayLoginService: TodayLoginService, userInfo):
-        self.session = todayLoginService.session
-        self.host = todayLoginService.host
+    def __init__(self, wiseLoginService: wiseLoginService, userInfo):
+        self.session = wiseLoginService.session
+        self.host = wiseLoginService.campus_host
         self.userInfo = userInfo
         self.collectWid = None
         self.formWids = []
@@ -27,12 +25,9 @@ class workLog:
     def checkHasLog(self):
         # 首先 获取 templateName=疫情采集（每天上报）新 的wid：37
         url = f'{self.host}wec-counselor-worklog-apps/worklog/template/listActiveTemplate'
-        params = {
-            'pageNumber': '1',
-            'pageSize': '9999999',
-            'status': '1'
-        }
-        res = self.session.post(url, data=json.dumps(params), verify=False).json()
+        params = {'pageNumber': '1', 'pageSize': '9999999', 'status': '1'}
+        res = self.session.post(url, data=json.dumps(params),
+                                verify=False).json()
         self.collectWid = res['datas']['rows'][0]['wid']
         url = f'{self.host}wec-counselor-worklog-apps/worklog/list'
         params = {
@@ -40,7 +35,8 @@ class workLog:
             'pageNumber': '1',
             'pageSize': '20'
         }
-        res = self.session.post(url, data=json.dumps(params), verify=False).json()
+        res = self.session.post(url, data=json.dumps(params),
+                                verify=False).json()
         for item in res['datas']['rows']:
             if item['status'] == 0:
                 self.formWids.append(item['wid'])
@@ -52,10 +48,9 @@ class workLog:
             self.createFormTemplate()
         for wid in self.formWids:
             url = f'{self.host}wec-counselor-worklog-apps/worklog/detail'
-            params = {
-                'wid': wid
-            }
-            res = self.session.post(url, data=json.dumps(params), verify=False).json()
+            params = {'wid': wid}
+            res = self.session.post(url, data=json.dumps(params),
+                                    verify=False).json()
             self.forms.append(res['datas']['form'])
 
     # 填充表单
@@ -71,7 +66,8 @@ class workLog:
                     if formItem['signScopeWids'] != '':
                         # 如果是签到选项
                         # 新的代码
-                        form = self.submitSign(formItem['wid'], self.formWids[pos])
+                        form = self.submitSign(formItem['wid'],
+                                               self.formWids[pos])
                         # 以下代码已放弃，应该是先去请求地点签到api
                         # value = {
                         #     "isInSignScope": False,
@@ -84,9 +80,11 @@ class workLog:
                     else:
                         # 判断是否需要检查标题
                         if self.userInfo['checkTitle'] == 1:
-                            if userItems[i]['form']['title'] != formItem['title']:
+                            if userItems[i]['form']['title'] != formItem[
+                                    'title']:
                                 raise Exception(
-                                    f'\r\n第{i + 1}个配置出错了\r\n您的标题为：{userItems[i]["form"]["title"]}\r\n系统的标题为：{formItem["title"]}')
+                                    f'\r\n第{i + 1}个配置出错了\r\n您的标题为：{userItems[i]["form"]["title"]}\r\n系统的标题为：{formItem["title"]}'
+                                )
                         # 文本选项直接赋值
                         formItem['value'] = userItems[i]['form']['value']
                         i += 1
@@ -132,13 +130,15 @@ class workLog:
             "longitude": self.userInfo['lon'],
             "latitude": self.userInfo['lat']
         }
-        res = self.session.post(url, data=json.dumps(params), headers=headers, verify=False).json()
+        res = self.session.post(url,
+                                data=json.dumps(params),
+                                headers=headers,
+                                verify=False).json()
         if res['message'] == 'SUCCESS':
             url = f'{self.host}wec-counselor-worklog-apps/worklog/detail'
-            params = {
-                'wid': worklogWid
-            }
-            res = self.session.post(url, data=json.dumps(params), verify=False).json()
+            params = {'wid': worklogWid}
+            res = self.session.post(url, data=json.dumps(params),
+                                    verify=False).json()
             form = res['datas']['form']
             return form
         else:
@@ -155,19 +155,21 @@ class workLog:
                 'form': form,
                 'operationType': 1
             }
-            res = self.session.post(f'{self.host}wec-counselor-worklog-apps/worklog/update', data=json.dumps(params),
-                                    verify=False).json()
+            res = self.session.post(
+                f'{self.host}wec-counselor-worklog-apps/worklog/update',
+                data=json.dumps(params),
+                verify=False).json()
             result.append(res['message'])
         return result
 
     # 创建模板
     def createFormTemplate(self):
         # 获取模板
-        params = {
-            'formWid': self.collectWid
-        }
-        res = self.session.post(f'{self.host}wec-counselor-worklog-apps/worklog/template/detail',
-                                data=json.dumps(params), verify=False).json()
+        params = {'formWid': self.collectWid}
+        res = self.session.post(
+            f'{self.host}wec-counselor-worklog-apps/worklog/template/detail',
+            data=json.dumps(params),
+            verify=False).json()
         formTemplate = res['datas']['content']
         for formItem in formTemplate:
             formItem.pop('fieldItems')
@@ -177,7 +179,9 @@ class workLog:
             'formWid': str(self.collectWid),
             'operationType': 0
         }
-        res = self.session.post(f'{self.host}wec-counselor-worklog-apps/worklog/update', data=json.dumps(params)).json()
+        res = self.session.post(
+            f'{self.host}wec-counselor-worklog-apps/worklog/update',
+            data=json.dumps(params)).json()
         if res['message'] == 'SUCCESS':
             self.formWids.append(res['datas']['wid'])
         else:

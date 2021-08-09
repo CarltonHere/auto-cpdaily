@@ -1,4 +1,3 @@
-import json
 import re
 import requests
 from bs4 import BeautifulSoup
@@ -16,20 +15,29 @@ class casLogin:
         self.login_url = login_url
         self.host = host
         self.session = session
+        self.type = 0
 
     # 判断是否需要验证码
     def getNeedCaptchaUrl(self):
-        host = re.findall('\w{4,5}\:\/\/.*?\/', self.login_url)[0]
-        url = host + 'authserver/needCaptcha.html' + '?username=' + self.username
-        flag = self.session.get(url, verify=False).text
-        return 'false' != flag and 'False' != flag
+        if self.type == 0:
+            url = self.host + 'authserver/needCaptcha.html' + '?username=' + self.username
+            flag = self.session.get(url, verify=False).text
+            return 'false' != flag and 'False' != flag
+        else:
+            url = self.host + 'authserver/checkNeedCaptcha.htl' + '?username=' + self.username
+            flag = self.session.get(url, verify=False).json()
+            return flag['isNeed']
 
     def login(self):
         html = self.session.get(self.login_url, verify=False).text
         soup = BeautifulSoup(html, 'lxml')
         form = soup.select('#casLoginForm')
         if (len(form) == 0):
-            raise Exception('出错啦！网页中没有找到casLoginForm')
+            form = soup.select('#loginFromId')
+            if (len(form) == 0):
+                raise Exception('出错啦！网页中没有找到LoginForm')
+            soup = BeautifulSoup(str(form[1]), 'lxml')
+            self.type = 1
         # 填充数据
         params = {}
         form = soup.select('input')
@@ -40,9 +48,12 @@ class casLogin:
                         params[item.get('name')] = ''
                     else:
                         params[item.get('name')] = item.get('value')
-        salt = soup.select("#pwdDefaultEncryptSalt")
+        if (self.type == 0):
+            salt = soup.select("#pwdDefaultEncryptSalt")
+        else:
+            salt = soup.select("#pwdEncryptSalt")
         if (len(salt) != 0):
-            salt = salt.get_text()
+            salt = salt[0].get('value')
         else:
             pattern = '\"(\w{16})\"'
             salt = re.findall(pattern, html)
@@ -56,19 +67,29 @@ class casLogin:
         else:
             params['password'] = Utils.encryptAES(self.password, salt)
             if self.getNeedCaptchaUrl():
-                imgUrl = self.host + 'authserver/captcha.html'
-                code = Utils.getCodeFromImg(self.session, imgUrl)
-                params['captchaResponse'] = code
-        data = self.session.post(self.login_url, params=params, allow_redirects=False)
+                if self.type == 0:
+                    imgUrl = self.host + 'authserver/captcha.html'
+                    params['captchaResponse'] = Utils.getCodeFromImg(
+                        self.session, imgUrl)
+                else:
+                    imgUrl = self.host + 'authserver/getCaptcha.htl'
+                    params['captcha'] = Utils.getCodeFromImg(
+                        self.session, imgUrl)
+        data = self.session.post(self.login_url,
+                                 params=params,
+                                 allow_redirects=False)
         # 如果等于302强制跳转，代表登陆成功
         if data.status_code == 302:
             jump_url = data.headers['Location']
             self.session.post(jump_url, verify=False)
             return self.session.cookies
-        elif data.status_code == 200:
+        elif data.status_code == 200 or data.status_code == 401:
             data = data.text
             soup = BeautifulSoup(data, 'lxml')
-            msg = soup.select('#errorMsg')[0].get_text()
+            if self.type == 0:
+                msg = soup.select('#errorMsg')[0].get_text()
+            else:
+                msg = soup.select('#formErrorTip2')[0].get_text()
             raise Exception(msg)
         else:
-            raise Exception('教务系统出现了问题啦！返回状态码：' + str(data.status_code))
+            raise Exception('CAS登陆失败！返回状态码：' + str(data.status_code))

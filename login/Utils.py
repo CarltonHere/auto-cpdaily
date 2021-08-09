@@ -24,8 +24,9 @@ class Utils:
         for i in range(length):
             data += baseString[random.randint(0, len(baseString) - 1)]
         return data
+
     @staticmethod
-    def getYmlConfig(yaml_file='./login/system.yml'):
+    def getYmlConfig(yaml_file='config.yml'):
         file = open(yaml_file, 'r', encoding="utf-8")
         file_data = file.read()
         file.close()
@@ -39,7 +40,8 @@ class Utils:
         randIvLen = 16
         ranStr = Utils.randString(randStrLen)
         ivStr = Utils.randString(randIvLen)
-        aes = AES.new(bytes(key, encoding='utf-8'), AES.MODE_CBC, bytes(ivStr, encoding="utf8"))
+        aes = AES.new(bytes(key, encoding='utf-8'), AES.MODE_CBC,
+                      bytes(ivStr, encoding="utf8"))
         data = ranStr + password
 
         text_length = len(data)
@@ -53,15 +55,20 @@ class Utils:
         text = base64.encodebytes(text)
         text = text.decode('utf-8').strip()
         return text
+
     # 通过url解析图片验证码
     @staticmethod
     def getCodeFromImg(res, imgUrl):
+        print('尝试识别验证码')
         response = res.get(imgUrl, verify=False)  # 将这个图片保存在内存
         # 得到这个图片的base64编码
-        imgCode = str(base64.b64encode(BytesIO(response.content).read()), encoding='utf-8')
+        imgCode = str(base64.b64encode(BytesIO(response.content).read()),
+                      encoding='utf-8')
         # print(imgCode)
         try:
-            cred = credential.Credential(Utils.getYmlConfig()['SecretId'], Utils.getYmlConfig()['SecretKey'])
+            cred = credential.Credential(
+                Utils.getYmlConfig()['ocrOption']['SecretId'],
+                Utils.getYmlConfig()['ocrOption']['SecretKey'])
             httpProfile = HttpProfile()
             httpProfile.endpoint = "ocr.tencentcloudapi.com"
 
@@ -70,9 +77,7 @@ class Utils:
             client = ocr_client.OcrClient(cred, "ap-beijing", clientProfile)
 
             req = models.GeneralBasicOCRRequest()
-            params = {
-                "ImageBase64": imgCode
-            }
+            params = {"ImageBase64": imgCode}
             req.from_json_string(json.dumps(params))
             resp = client.GeneralBasicOCR(req)
             codeArray = json.loads(resp.to_json_string())['TextDetections']
@@ -85,5 +90,3 @@ class Utils:
                 return Utils.getCodeFromImg(res, imgUrl)
         except TencentCloudSDKException as err:
             raise Exception('验证码识别出现问题了' + str(err.message))
-
-

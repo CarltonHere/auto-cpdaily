@@ -1,5 +1,5 @@
 import yaml
-from todayLoginService import TodayLoginService
+from login.wiseLoginService import wiseLoginService
 from actions.autoSign import AutoSign
 from actions.collection import Collection
 from actions.workLog import workLog
@@ -50,20 +50,20 @@ def main():
 
 
 def working(user):
-    today = TodayLoginService(user['user'])
-    today.login()
+    wise = wiseLoginService(user['user'])
+    wise.login()
     # 登陆成功，通过type判断当前属于 信息收集、签到、查寝
     # 信息收集
     if user['user']['type'] == 0:
         # 以下代码是信息收集的代码
-        collection = Collection(today, user['user'])
+        collection = Collection(wise, user['user'])
         collection.queryForm()
         collection.fillForm()
         msg = collection.submitForm()
         return msg
     elif user['user']['type'] == 1:
         # 以下代码是签到的代码
-        sign = AutoSign(today, user['user'])
+        sign = AutoSign(wise, user['user'])
         sign.getUnSignTask()
         sign.getDetailTask()
         sign.fillForm()
@@ -71,7 +71,7 @@ def working(user):
         return msg
     elif user['user']['type'] == 2:
         # 以下代码是查寝的代码
-        check = sleepCheck(today, user['user'])
+        check = sleepCheck(wise, user['user'])
         check.getUnSignedTasks()
         check.getDetailTask()
         check.fillForm()
@@ -79,7 +79,7 @@ def working(user):
         return msg
     elif user['user']['type'] == 3:
         # 以下代码是工作日志的代码
-        work = workLog(today, user['user'])
+        work = workLog(wise, user['user'])
         work.checkHasLog()
         work.getFormsByWids()
         work.fillForms()

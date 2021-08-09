@@ -1,111 +1,53 @@
-## 本地化登陆以及模块化类的使用说明
+## 欢迎使用今日校园自动化
 
+今日校园自动化是一个基于Python的爬虫项目，主要实现今日校园签到、信息收集、查寝等循环表单的自动化任务
 
+该项目是由[ZimoLoveShuang/auto-submit](https://github.com/ZimoLoveShuang/auto-submit)仓库基础上发展而来，请自行前往STAR，我们感谢原作者的努力与付出。该项目现在由[Thriving123](https://github.com/thriving123)与[Carlton](https://github.com/carltonhere)维护。
 
-#### 博客教程：[https://blog.itruoli.com/archives/29.html](https://blog.itruoli.com/archives/29.html)
+### 📃免责声明
 
-#### 视频教程：[https://pan.ruoli.cc/nanjing/video/fucktoday/](https://pan.ruoli.cc/nanjing/video/fucktoday/)
+AutoCpdaily为Python学习交流的开源非营利项目，仅作为程序员之间相互学习交流之用，使用需严格遵守开源许可协议。严禁用于商业用途，禁止使用AutoCpdaily进行任何盈利活动。对一切非法使用所产生的后果，我们概不负责。本项目对您如有困扰请联系我们删除。
 
-#### 小声BB：求求大哥们给个star吧
+### 📗使用方法
 
-#### 1、本地化登陆
+#### 🔑快速使用
 
-目前仅仅完成了iap以及部分cas学校的登陆
+ - 下载并解压项目代码包
+ - 修改`Config.yml`文件中的相关配置内容
+ - 在根目录运行`pip install -r requirements.txt -t ./ -i https://mirrors.aliyun.com/pypi/simple`安装项目依赖
+ - 执行`Python index.py`即可运行项目
 
-自动识别验证码需要开通 `通用文字识别`（OCR）最普通的版本
+#### 📅示例 腾讯云函数平台
 
-然后通过python访问`腾讯通用文字识别`需要`访问密钥`进行认证
+ - 下载项目代码包，无需解压
+ - 打开百度搜索[腾讯云函数](https://console.cloud.tencent.com/scf/index?rid=1)，注册认证后，进入控制台。
+ - 点左边的函数服务，新建云函数，名称随意，运行环境选择`python3.6`，创建方式选择`自定义创建`，提交方式选择`本地上传zip包`并上传下载好的项目代码包
+ - 在`高级配置`中配置`执行超时时间`60秒，在`触发器配置`中选择自定义创建，`触发周期`选择自定义触发，配置cron表达式，下方举例三个常用配置
+ - 点击完成，不要关闭页面等待创建完成后，选择立即跳转
+ - 点击函数代码选项卡，在左边的`src`目录下选择`config.yml`，配置你的用户签到信息，注意删除多余的示例并注意每行行首的缩进
+ - 在编辑器上方的菜单栏中，选择`终端`>`新终端`，在下方弹出的终端里输入`pip3 install -r src/requirements.txt -t src -i https://mirrors.aliyun.com/pypi/simple`并回车安装项目依赖
+ - 等待依赖安装完毕，点击下方的`部署`即可完成部署
 
-并且需要配置路径`今日校园/login/system.yml`里的`SecretId`以及`SecretKey`
+```
+如需每日上午0点执行可使用该表达式
+0 0 0 * * * *
+如需每日上午8点30分执行可使用该表达式
+0 30 8 * * * *
+如需每日中午12点执行可使用该表达式
+0 0 12 * * * *
+```
 
-腾讯OCR开通地址：[点击这里](https://console.cloud.tencent.com/ocr/overview)
+#### 🔐进阶使用
 
-腾讯访问密钥开通地址：[点击这里](https://console.cloud.tencent.com/cam/capi)
+- 如需推送提醒服务，请在`Config.yml`顶部的`notifyOption`参数中进行配置
+- 如需验证码识别需要先[开通腾讯OCR服务](https://console.cloud.tencent.com/ocr/overview)，然后[申请腾讯云API密钥](https://console.cloud.tencent.com/cam/capi)，最后将API密钥配置到路径`Config.yml`里的`SecretId`以及`SecretKey`参数内
 
-**当然**，如果你能确保你的登陆不需要验证码（也就是确保最近一次登陆自己的智慧校园是登陆成功的），那么请在这里随意填写
+### 🔧常见问题
 
-~~后续其他学校的模拟登陆请提供你的账号密码学校名称等给我，来进行适配（又一波坑）~~
+- 如果云函数报错`HTTP-418`请更换云函数其他地区节点
+- 使用过程中报错`No module named 'XXXXX'`请重新安装依赖
+- 请注意`Config.yml`中每行参数的缩进位置，不然会产生错误
 
-#### 2、信息收集
+### 👨‍👨‍👦‍👦参与贡献
 
-如何使用信息收集，基本只需要修改`今日校园/config.yml`中的`- user`里的配置信息
-
-其中有个type选项，在`config.yml`有着详尽的说明，如果您不会使用，那么请询问吧
-
-在`config.yml`中的第二个用户配置里，有着对应的模板，默认模板仅试用于`宜宾学院`
-
-#### 3、签到
-
-如何使用签到，基本只需要修改`今日校园/config.yml`中的`- user`里的配置信息
-
-其中有个type选项，在`config.yml`有着详尽的说明，如果您不会使用，那么请询问吧
-
-在`config.yml`中的第三个用户配置里，有着对应的模板，默认模板仅试用于`武汉船舶职业技术学院`
-
-#### 4、查寝
-
-如何使用查寝，基本只需要修改`今日校园/config.yml`中的`- user`里的配置信息
-
-其中有个type选项，在`config.yml`有着详尽的说明，如果您不会使用，那么请询问吧
-
-在`config.yml`中的第四个用户配置里，有着对应的模板，默认模板仅试用于`四川信息技术职业学院`
-
-#### 5、工作日志
-
-如何使用工作日志，基本只需要修改`今日校园/config.yml`中的`- user`里的配置信息
-
-其中有个type选项，在`config.yml`有着详尽的说明，如果您不会使用，那么请询问吧
-
-在`config.yml`中的第一个用户配置里，有着对应的模板，默认模板仅试用于`宜宾学院`
-
-#### 6、多用户配置
-
-同样的，多用户配置方法已经在`config.yml`中给出了对应的模板，并且可以签到、信息收集、查寝、工作日志
-
-#### 7、关于依赖
-
-1. 腾讯云的云函数已经拥有了自己的终端，那么我们不再需要创建层了，请将`今日校园`文件夹里的代码打包成`zip`并上传到腾讯云，最后到`requirements.txt`目录（一般情况应该也就是上传后的`src`目录里）执行以下命令
-
-   （腾讯云函数新版本编辑器，下方有个终端，打开它，并且执行`cd ./src`即可进入到`src`目录）
-
-   `pip install -r requirements.txt -t ./ -i https://mirrors.aliyun.com/pypi/simple`
-
-   当然，盲猜你们都是`python3`，那么请使用`pip3`代替`pip`
-
-   也就是
-
-   `pip3 install -r requirements.txt -t ./ -i https://mirrors.aliyun.com/pypi/simple`
-
-2. 如果你是阿里云，先将`依赖.zip`解压到`依赖`文件夹，然后将`今日校园`文件夹里的所有文件及代码全部复制到`依赖`文件夹。并且重新将整个`依赖`文件夹打包成`zip`格式一并上传到阿里云。
-
-3. 如果你是本地环境，那么请直接进入到`requirements.txt `对应目录执行命令
-
-   `pip3 install -r requirements.txt -i https://mirrors.aliyun.com/pypi/simple`
-
-#### 8、食用方法
-
-1. 下载全部源码，然后请查看**第7步：关于依赖**，以解决对应环境的依赖问题
-2. 修改对应的`config.yml`文件，记得删除多余的配置项，默认使用了两个用户的配置项，并且第一个`- user`是`签到`配置，第二个`- user`是`信息收集的配置`
-3. 之后即可*enjoy it*~~（师兄最爱的话语）~~
-
-#### 9、关于推送
-
-- 目前已经有了邮件推送功能，如需自己的邮件api请自行修改`./actions/rlMessage.py`里的代码
-- 如果需要`qmsg`或者`微信推送`或者其他推送方法请自行修改`./actions/rlMessage.py`里的代码
-- QQ推送制作完成，等待大家贡献一个服务器和一个太阳号的QQ号码作为机器人
-
-#### 10、更新日志
-
-- 新增登陆适配`武汉轻工大学`，模块为`whpuLogin`，修复文档，`v1.1.2`
-- 新增查寝模块`sleepCheck`，添加`debug`模式，可在`config.yml`中修改，用以找到错误是哪个位置 `v1.1.1`
-- 新增邮件推送开关，当`config.yml`中的`- user`里的`email`为如下格式：`email: ''`，将不推送邮件 `v1.1.0`
-- 新增一个`cas`学校的登陆（河南大学），新增`henuLogin`模块 `v1.0.9`
-- 完成邮件推送功能 `v1.0.8`
-- 修复签到值错误但不提示的bug `v1.0.7`
-- 完成`教师端`的`工作日志`：新增`workLog`类 `v1.0.6`
-- 制作视频，提取`Utils`公用模块 `v1.0.5`
-- 修复签到失效 `v1.0.4`
-- 完成`签到任务`，新增`autoSign`模块，修复bug `v1.0.3`
-- 完成`iap`学校的登陆，新增`iapLogin`模块完善文档 `v1.0.2`
-- 完成部分通用`cas`学校的登陆适配，并完成`信息收集`，新增`casLogin`模块和`collection`模块 `v1.0.1`
-- 项目初始化（克隆自`子墨师兄`的代码）`v1.0`，新建`ruoli`分支并在其上魔改
+欢迎各位同学通过PR或者ISSUES的方式直接参与到项目中来，请注意反馈BUG需提供完整日志！

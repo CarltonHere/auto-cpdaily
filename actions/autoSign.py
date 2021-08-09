@@ -2,18 +2,16 @@ import base64
 import json
 import re
 import uuid
-
 from pyDes import des, CBC, PAD_PKCS5
 from requests_toolbelt import MultipartEncoder
-
-from todayLoginService import TodayLoginService
+from login.wiseLoginService import wiseLoginService
 
 
 class AutoSign:
     # 初始化签到类
-    def __init__(self, todayLoginService: TodayLoginService, userInfo):
-        self.session = todayLoginService.session
-        self.host = todayLoginService.host
+    def __init__(self, wiseLoginService: wiseLoginService, userInfo):
+        self.session = wiseLoginService.session
+        self.host = wiseLoginService.campus_host
         self.userInfo = userInfo
         self.taskInfo = None
         self.task = None
@@ -26,9 +24,15 @@ class AutoSign:
         headers['Content-Type'] = 'application/json'
         # 第一次请求接口获取cookies（MOD_AUTH_CAS）
         url = f'{self.host}wec-counselor-sign-apps/stu/sign/getStuSignInfosInOneDay'
-        self.session.post(url, headers=headers, data=json.dumps({}), verify=False)
+        self.session.post(url,
+                          headers=headers,
+                          data=json.dumps({}),
+                          verify=False)
         # 第二次请求接口，真正的拿到具体任务
-        res = self.session.post(url, headers=headers, data=json.dumps({}), verify=False).json()
+        res = self.session.post(url,
+                                headers=headers,
+                                data=json.dumps({}),
+                                verify=False).json()
         if len(res['datas']['unSignedTasks']) < 1:
             raise Exception('当前暂时没有未签到的任务哦！')
         # 获取最后的一个任务
@@ -43,13 +47,18 @@ class AutoSign:
         url = f'{self.host}wec-counselor-sign-apps/stu/sign/detailSignInstance'
         headers = self.session.headers
         headers['Content-Type'] = 'application/json'
-        res = self.session.post(url, headers=headers, data=json.dumps(self.taskInfo), verify=False).json()
+        res = self.session.post(url,
+                                headers=headers,
+                                data=json.dumps(self.taskInfo),
+                                verify=False).json()
         self.task = res['datas']
 
     # 上传图片到阿里云oss
     def uploadPicture(self):
         url = f'{self.host}wec-counselor-sign-apps/stu/oss/getUploadPolicy'
-        res = self.session.post(url=url, headers={'content-type': 'application/json'}, data=json.dumps({'fileType': 1}),
+        res = self.session.post(url=url,
+                                headers={'content-type': 'application/json'},
+                                data=json.dumps({'fileType': 1}),
                                 verify=False)
         datas = res.json().get('datas')
         fileName = datas.get('fileName')
@@ -58,13 +67,18 @@ class AutoSign:
         signature = datas.get('signature')
         policyHost = datas.get('host')
         headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:50.0) Gecko/20100101 Firefox/50.0'
+            'User-Agent':
+            'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:50.0) Gecko/20100101 Firefox/50.0'
         }
         multipart_encoder = MultipartEncoder(
             fields={  # 这里根据需要进行参数格式设置
-                'key': fileName, 'policy': policy, 'OSSAccessKeyId': accessKeyId, 'success_action_status': '200',
+                'key': fileName,
+                'policy': policy,
+                'OSSAccessKeyId': accessKeyId,
+                'success_action_status': '200',
                 'signature': signature,
-                'file': ('blob', open(self.userInfo['photo'], 'rb'), 'image/jpg')
+                'file': ('blob', open(self.userInfo['photo'], 'rb'),
+                         'image/jpg')
             })
         headers['Content-Type'] = multipart_encoder.content_type
         res = self.session.post(url=policyHost,
@@ -76,7 +90,9 @@ class AutoSign:
     def getPictureUrl(self):
         url = f'{self.host}wec-counselor-sign-apps/stu/sign/previewAttachment'
         params = {'ossKey': self.fileName}
-        res = self.session.post(url=url, headers={'content-type': 'application/json'}, data=json.dumps(params),
+        res = self.session.post(url=url,
+                                headers={'content-type': 'application/json'},
+                                data=json.dumps(params),
                                 verify=False)
         photoUrl = res.json().get('datas')
         return photoUrl
@@ -101,7 +117,8 @@ class AutoSign:
                 if self.userInfo['checkTitle'] == 1:
                     if userItem['title'] != extraField['title']:
                         raise Exception(
-                            f'\r\n第{i + 1}个配置出错了\r\n您的标题为：{userItem["title"]}\r\n系统的标题为：{extraField["title"]}')
+                            f'\r\n第{i + 1}个配置出错了\r\n您的标题为：{userItem["title"]}\r\n系统的标题为：{extraField["title"]}'
+                        )
                 extraFieldItems = extraField['extraFieldItems']
                 flag = False
                 for extraFieldItem in extraFieldItems:
@@ -109,19 +126,25 @@ class AutoSign:
                         data = extraFieldItem['content']
                     # print(extraFieldItem)
                     if extraFieldItem['content'] == userItem['value']:
-                        flag =True
-                        extraFieldItemValue = {'extraFieldItemValue': userItem['value'],
-                                               'extraFieldItemWid': extraFieldItem['wid']}
+                        flag = True
+                        extraFieldItemValue = {
+                            'extraFieldItemValue': userItem['value'],
+                            'extraFieldItemWid': extraFieldItem['wid']
+                        }
                         extraFieldItemValues.append(extraFieldItemValue)
                     # 其他 额外的文本
                     if extraFieldItem['isOtherItems'] == 1:
                         flag = True
-                        extraFieldItemValue = {'extraFieldItemValue': userItem['value'],
-                                               'extraFieldItemWid': extraFieldItem['wid']}
+                        extraFieldItemValue = {
+                            'extraFieldItemValue': userItem['value'],
+                            'extraFieldItemWid': extraFieldItem['wid']
+                        }
                         extraFieldItemValues.append(extraFieldItemValue)
                     ####此处可能存在未解决问题，后续持续观察
                 if not flag:
-                    raise Exception(f'\r\n第{ i + 1 }个配置出错了\r\n表单未找到你设置的值：{userItem["value"]}\r\n，你上次系统选的值为：{ data }')
+                    raise Exception(
+                        f'\r\n第{ i + 1 }个配置出错了\r\n表单未找到你设置的值：{userItem["value"]}\r\n，你上次系统选的值为：{ data }'
+                    )
             self.form['extraFieldItems'] = extraFieldItemValues
         self.form['signInstanceWid'] = self.task['signInstanceWid']
         self.form['longitude'] = self.userInfo['lon']
@@ -130,7 +153,7 @@ class AutoSign:
         self.form['abnormalReason'] = self.userInfo['abnormalReason']
         self.form['position'] = self.userInfo['address']
         self.form['uaIsCpadaily'] = True
-        self.form['signVersion'] ='1.0.0'
+        self.form['signVersion'] = '1.0.0'
 
     # DES加密
     def DESEncrypt(self, s, key='b3L26XNL'):
@@ -163,6 +186,9 @@ class AutoSign:
             'Connection': 'Keep-Alive'
         }
         # print(json.dumps(self.form))
-        res = self.session.post(f'{self.host}wec-counselor-sign-apps/stu/sign/submitSign', headers=headers,
-                                data=json.dumps(self.form), verify=False).json()
+        res = self.session.post(
+            f'{self.host}wec-counselor-sign-apps/stu/sign/submitSign',
+            headers=headers,
+            data=json.dumps(self.form),
+            verify=False).json()
         return res['message']
