@@ -6,6 +6,7 @@ from actions.workLog import workLog
 from actions.sleepCheck import sleepCheck
 from actions.pushKit import pushKit
 from datetime import datetime, timedelta, timezone
+import sys
 
 
 def getYmlConfig(yaml_file='config.yml'):
@@ -22,8 +23,14 @@ def getTimeStr():
     return bj_dt.strftime("%Y-%m-%d %H:%M:%S")
 
 
+def log(content):
+    print(getTimeStr() + ' ' + "V%s" % (getYmlConfig()['Version']) + ' ' +
+          str(content))
+    sys.stdout.flush()
+
+
 def main():
-    print("签到任务开始执行")
+    log("签到任务开始执行")
     config = getYmlConfig()
     push = pushKit(config['notifyOption'])
     for user in config['users']:
@@ -36,17 +43,19 @@ def main():
             except Exception as e:
                 msg = str(e)
                 ret = False
-            print(msg)
             ntm = getTimeStr()
             if ret == True:
                 #此处需要注意就算提示成功也不一定是真的成功，以实际为准
+                log(msg)
                 msg = push.sendMail('今日校园签到成功通知', f'服务器于{ntm}尝试签到成功!',
-                                    user['user']['email'])
+                                    user['user'])
             else:
+                log("Error:" + msg)
                 msg = push.sendMail('今日校园签到失败通知',
                                     f'服务器于{ntm}尝试签到失败!\n错误信息:{msg}',
-                                    user['user']['email'])
-            print(msg)
+                                    user['user'])
+            log(msg)
+    log("签到任务执行完毕")
 
 
 def working(user):
@@ -95,7 +104,7 @@ def handler(event, context):
 # 腾讯云的入口函数
 def main_handler(event, context):
     main()
-    return '签到任务执行完毕'
+    return 'Finished'
 
 
 if __name__ == '__main__':

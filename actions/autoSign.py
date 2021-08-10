@@ -126,24 +126,29 @@ class AutoSign:
                         data = extraFieldItem['content']
                     # print(extraFieldItem)
                     if extraFieldItem['content'] == userItem['value']:
-                        flag = True
-                        extraFieldItemValue = {
-                            'extraFieldItemValue': userItem['value'],
-                            'extraFieldItemWid': extraFieldItem['wid']
-                        }
-                        extraFieldItemValues.append(extraFieldItemValue)
-                    # 其他 额外的文本
-                    if extraFieldItem['isOtherItems'] == 1:
-                        flag = True
-                        extraFieldItemValue = {
-                            'extraFieldItemValue': userItem['value'],
-                            'extraFieldItemWid': extraFieldItem['wid']
-                        }
-                        extraFieldItemValues.append(extraFieldItemValue)
-                    ####此处可能存在未解决问题，后续持续观察
+                        if extraFieldItem['isOtherItems'] == 1:
+                            if ('extra' in userItem):
+                                flag = True
+                                extraFieldItemValue = {
+                                    'extraFieldItemValue': userItem['extra'],
+                                    'extraFieldItemWid': extraFieldItem['wid']
+                                }
+                                extraFieldItemValues.append(
+                                    extraFieldItemValue)
+                            else:
+                                raise Exception(
+                                    f'\r\n第{ i + 1 }个配置出错了\r\n表单未找到你设置的值：{userItem["value"]},\r\n该选项需要extra字段'
+                                )
+                        else:
+                            flag = True
+                            extraFieldItemValue = {
+                                'extraFieldItemValue': userItem['value'],
+                                'extraFieldItemWid': extraFieldItem['wid']
+                            }
+                            extraFieldItemValues.append(extraFieldItemValue)
                 if not flag:
                     raise Exception(
-                        f'\r\n第{ i + 1 }个配置出错了\r\n表单未找到你设置的值：{userItem["value"]}\r\n，你上次系统选的值为：{ data }'
+                        f'\r\n第{ i + 1 }个配置出错了\r\n表单未找到你设置的值：{userItem["value"]},\r\n你上次系统选的值为：{ data }'
                     )
             self.form['extraFieldItems'] = extraFieldItemValues
         self.form['signInstanceWid'] = self.task['signInstanceWid']

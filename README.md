@@ -2,7 +2,7 @@
 
 今日校园自动化是一个基于Python的爬虫项目，主要实现今日校园签到、信息收集、查寝等循环表单的自动化任务
 
-该项目是由[ZimoLoveShuang/auto-submit](https://github.com/ZimoLoveShuang/auto-submit)仓库基础上发展而来，请自行前往STAR，我们感谢原作者的努力与付出。该项目现在由[Thriving123](https://github.com/thriving123)与[Carlton](https://github.com/carltonhere)维护。
+该项目是由[ZimoLoveShuang/auto-submit](https://github.com/ZimoLoveShuang/auto-submit)仓库和[thriving123/f*kTodayStudy](https://github.com/thriving123/fuckTodayStudy)仓库基础上发展而来，请自行前往STAR，我们感谢原作者的努力与付出。
 
 ### 📃免责声明
 
@@ -51,3 +51,8 @@ AutoCpdaily为Python学习交流的开源非营利项目，仅作为程序员之
 ### 👨‍👨‍👦‍👦参与贡献
 
 欢迎各位同学通过PR或者ISSUES的方式直接参与到项目中来，请注意反馈BUG需提供完整日志！
+
+### 📜许可证
+
+本项目的源代码在MPL2.0协议下发布，同时附加以下条目：
+* **非商业性使用** — 不得将此项目及其衍生的项目的源代码和二进制产品用于任何商业和盈利用途

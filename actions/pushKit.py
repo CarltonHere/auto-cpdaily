@@ -11,17 +11,21 @@ class pushKit:
         self.option = option
         self.type = option['method']
 
-    def sendMail(self, title, msg, mail=''):
-        if self.type == 1:
-            return self.sendMailByApi(mail, title, msg)
-        elif self.type == 2:
-            return self.sendMailByLocal(mail, title, msg)
-        else:
-            return '推送服务已禁用'
+    def sendMail(self, title, msg, user=''):
+        if 'email' in user:
+            if self.type == 1:
+                return self.sendMailByApi(user['email'], title, msg)
+            elif self.type == 2:
+                return self.sendMailByLocal(user['email'], title, msg)
+        if 'qId' in user:
+            if self.type == 3:
+                return self.sendMailByQmsg(user['qId'], title, msg)
+        if self.type == 0:
+            return '消息推送服务未启用'
+        return '推送参数配置错误，已取消发送！'
 
     # 发送邮件消息
     def sendMailByApi(self, mail, title, msg):
-        # 若离邮件api， 将会存储消息到数据库，并保存1周以供查看，请勿乱用，谢谢合作
         if mail == '':
             return '邮箱为空，已取消发送邮件！'
         if self.option['apiUrl'] == '':
@@ -69,5 +73,23 @@ class pushKit:
         except Exception:  #如果try中的语句没有执行，则会执行下面的ret=False
             ret = "邮件发送失败"
         return ret
+
+    def sendMailByQmsg(self, qId, title, msg):
+        if self.option['qmsgOption']['key'] == '':
+            return 'qmsg的key为空，已取消发送消息！'
+        if self.option['qmsgOption']['baseUrl'] == '':
+            return 'qmsg的baseUrl为空，设置baseUrl后才能发送邮件'
+        if qId['type'] == 1:
+            url = self.option['qmsgOption'][
+                'baseUrl'] + "group/" + self.option['qmsgOption']['key']
+        else:
+            url = self.option['qmsgOption']['baseUrl'] + "send/" + self.option[
+                'qmsgOption']['key']
+        params = {'msg': title + "\n" + msg, 'qq': qId['id']}
+        res = requests.post(url, params=params).json()
+        if (res['success'] == True):
+            return 'qmsg推送成功'
+        else:
+            return 'qmsg推送失败,' + res['reason']
 
     # 其他通知方式待添加
