@@ -44,12 +44,15 @@ users:
         password: ''
         # 地址信息
         address: '宜宾市（自己改）'
-        #email 接受推送消息的邮箱，可不填
-        email: ''
-        #qId 为qmsg参数,非qmsg推送不填,不懂的也不填 type 0 为qq号 1 为群号 id 为qq号 
-        qId:
-            type: 0
-            id: ''
+        notifyOption: 
+            # method和顶部参数一致，可以单独定义单个用户推送模式
+            # method: 0
+            #email 接受推送消息的邮箱，可不填
+            email: ''
+            #qId 为qmsg参数,非qmsg推送不填,不懂的也不填 type 0 为qq号 1 为群号 id 为qq号 
+            qId:
+                type: 0
+                id: ''
         # 附上经纬度查询地址（请自行选择自己的学校地址，address，lon，lat都要填查询到的）：http://api.map.baidu.com/lbsapi/getpoint/index.html
         #lon 经度
         lon: 104.616858
@@ -93,12 +96,15 @@ users:
         password: ''
         # 定位位置信息
         address: '四川省（自己改）'
-        #email 接受推送消息的邮箱，可不填
-        email: ''
-        #qId 为qmsg参数,非qmsg推送不填,不懂的也不填 type 0 为qq号 1 为群号 id 为qq号 
-        qId:
-            type: 0
-            id: ''
+        notifyOption: 
+            # method和顶部参数一致，可以单独定义单个用户推送模式
+            # method: 0
+            #email 接受推送消息的邮箱，可不填
+            email: ''
+            #qId 为qmsg参数,非qmsg推送不填,不懂的也不填 type 0 为qq号 1 为群号 id 为qq号 
+            qId:
+                type: 0
+                id: ''
         # 附上经纬度查询地址（请自行选择自己的学校地址，address，lon，lat都要填查询到的）：http://api.map.baidu.com/lbsapi/getpoint/index.html
         # 经纬度信息
         lon: 104.6191824
@@ -135,20 +141,23 @@ users:
     - user:
         # 任务类型（收集：0、签到：1、查寝：2）
         type: 1
+        #school 学校全称
+        schoolName: 武汉船舶职业技术学院
         #username 学号或者工号
         username: ''
         #password 密码
         password: ''
         #address 地址，定位信息
         address: ''
-        #email 接受推送消息的邮箱，可不填
-        email: ''
-        #qId 为qmsg参数,非qmsg推送不填,不懂的也不填 type 0 为qq号 1 为群号 id 为qq号 
-        qId:
-            type: 0
-            id: ''
-        #school 学校全称
-        schoolName: 武汉船舶职业技术学院
+        notifyOption: 
+            # method和顶部参数一致，可以单独定义单个用户推送模式
+            # method: 0
+            #email 接受推送消息的邮箱，可不填
+            email: ''
+            #qId 为qmsg参数,非qmsg推送不填,不懂的也不填 type 0 为qq号 1 为群号 id 为qq号 
+            qId:
+                type: 0
+                id: ''
         # 附上经纬度查询地址（请自行选择自己的学校地址，address，lon，lat都要填查询到的）：http://api.map.baidu.com/lbsapi/getpoint/index.html
         #lon 经度
         lon: 114.244845
@@ -187,13 +196,15 @@ users:
         password: ''
         # 地址信息
         address: ''
-        #email 接受通知消息的邮箱
-        #email 接受推送消息的邮箱，可不填
-        email: ''
-        #qId 为qmsg参数,非qmsg推送不填,不懂的也不填 type 0 为qq号 1 为群号 id 为qq号 
-        qId:
-            type: 0
-            id: ''
+        notifyOption: 
+            # method和顶部参数一致，可以单独定义单个用户推送模式
+            # method: 0
+            #email 接受推送消息的邮箱，可不填
+            email: ''
+            #qId 为qmsg参数,非qmsg推送不填,不懂的也不填 type 0 为qq号 1 为群号 id 为qq号 
+            qId:
+                type: 0
+                id: ''
         # 附上经纬度查询地址（请自行选择自己的学校地址，address，lon，lat都要填查询到的）：http://api.map.baidu.com/lbsapi/getpoint/index.html
         #lon 经度
         lon: 105.895856

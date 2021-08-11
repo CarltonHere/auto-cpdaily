@@ -11,21 +11,29 @@ class pushKit:
         self.option = option
         self.type = option['method']
 
-    def sendMail(self, title, msg, user=''):
-        if 'email' in user:
-            if self.type == 1:
-                return self.sendMailByApi(user['email'], title, msg)
-            elif self.type == 2:
-                return self.sendMailByLocal(user['email'], title, msg)
-        if 'qId' in user:
-            if self.type == 3:
-                return self.sendMailByQmsg(user['qId'], title, msg)
-        if self.type == 0:
+    def sendMsg(self, title, msg, user=''):
+        if('notifyOption' in user):
+            userOption = user['notifyOption']
+        else:
+            return '该用户未配置推送，已取消发送！'
+        method = self.type
+        if('method' in userOption):
+            method = userOption['method']
+        # 判断推送类型
+        if 'email' in userOption:
+            if method == 1:
+                return self.sendMsgByMailApi(userOption['email'], title, msg)
+            elif method == 2:
+                return self.sendMsgBySmtp(userOption['email'], title, msg)
+        if 'qId' in userOption:
+            if method == 3:
+                return self.sendMsgByQmsg(userOption['qId'], title, msg)
+        if method == 0:
             return '消息推送服务未启用'
         return '推送参数配置错误，已取消发送！'
 
     # 发送邮件消息
-    def sendMailByApi(self, mail, title, msg):
+    def sendMsgByMailApi(self, mail, title, msg):
         if mail == '':
             return '邮箱为空，已取消发送邮件！'
         if self.option['apiUrl'] == '':
@@ -35,7 +43,7 @@ class pushKit:
         return res['msg']
 
         # smtp本地邮件接口
-    def sendMailByLocal(self, mail, title, msg):
+    def sendMsgBySmtp(self, mail, title, msg):
         ret = "邮件发送成功"
         try:
             if mail == '':
@@ -74,7 +82,7 @@ class pushKit:
             ret = "邮件发送失败"
         return ret
 
-    def sendMailByQmsg(self, qId, title, msg):
+    def sendMsgByQmsg(self, qId, title, msg):
         if self.option['qmsgOption']['key'] == '':
             return 'qmsg的key为空，已取消发送消息！'
         if self.option['qmsgOption']['baseUrl'] == '':

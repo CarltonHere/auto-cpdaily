@@ -121,6 +121,7 @@ class AutoSign:
                         )
                 extraFieldItems = extraField['extraFieldItems']
                 flag = False
+                data = 'NULL'
                 for extraFieldItem in extraFieldItems:
                     if extraFieldItem['isSelected']:
                         data = extraFieldItem['content']
