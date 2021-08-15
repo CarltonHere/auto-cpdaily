@@ -3,6 +3,7 @@ import requests
 from urllib3.exceptions import InsecureRequestWarning
 from login.casLogin import casLogin
 from login.iapLogin import iapLogin
+from login.kmuLogin import kmuLogin
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
@@ -57,7 +58,8 @@ class wiseLoginService:
                 else:
                     raise Exception('未找到客户端登录地址')
                 res = self.session.get(clientUrl)
-                self.campus_host = re.findall('\w{4,5}\:\/\/.*?\/', clientUrl)[0]
+                self.campus_host = re.findall('\w{4,5}\:\/\/.*?\/',
+                                              clientUrl)[0]
                 self.login_url = res.url
                 self.login_host = re.findall('\w{4,5}\:\/\/.*?\/', res.url)[0]
                 self.login_type = joinType
@@ -73,7 +75,10 @@ class wiseLoginService:
                                         self.session)
             self.session.cookies = self.loginEntity.login()
         elif self.login_url.find('kmu.edu.cn') != -1:
-            raise Exception('请联系开发者适配登陆')
+            self.loginEntity = kmuLogin(self.username, self.password,
+                                        self.login_url, self.login_host,
+                                        self.session)
+            self.session.cookies = self.loginEntity.login()
         else:
             self.loginEntity = casLogin(self.username, self.password,
                                         self.login_url, self.login_host,

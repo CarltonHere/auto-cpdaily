@@ -1,15 +1,17 @@
 import base64
 import json
 import random
-from io import BytesIO
-
+import rsa
+import sys
 import yaml
+from io import BytesIO
 from Crypto.Cipher import AES
 from tencentcloud.common import credential
 from tencentcloud.common.exception.tencent_cloud_sdk_exception import TencentCloudSDKException
 from tencentcloud.common.profile.client_profile import ClientProfile
 from tencentcloud.common.profile.http_profile import HttpProfile
 from tencentcloud.ocr.v20181119 import ocr_client, models
+from datetime import datetime, timedelta, timezone
 
 
 class Utils:
@@ -59,7 +61,7 @@ class Utils:
     # 通过url解析图片验证码
     @staticmethod
     def getCodeFromImg(res, imgUrl):
-        print('尝试识别验证码')
+        Utils.log('开始识别验证码')
         response = res.get(imgUrl, verify=False)  # 将这个图片保存在内存
         # 得到这个图片的base64编码
         imgCode = str(base64.b64encode(BytesIO(response.content).read()),
@@ -85,8 +87,50 @@ class Utils:
             for item in codeArray:
                 code += item['DetectedText'].replace(' ', '')
             if len(code) == 4:
+                Utils.log('识别验证码成功')
                 return code
             else:
+                Utils.log('识别结果不正确正在重试')
                 return Utils.getCodeFromImg(res, imgUrl)
         except TencentCloudSDKException as err:
             raise Exception('验证码识别出现问题了' + str(err.message))
+
+    @staticmethod
+    def encryptRSA(message, m, e):
+        mm = int(m, 16)
+        ee = int(e, 16)
+        rsa_pubkey = rsa.PublicKey(mm, ee)
+        crypto = Utils._encrypt_rsa(message.encode(), rsa_pubkey)
+        return crypto.hex()
+
+    @staticmethod
+    def _pad_for_encryption_rsa(message, target_length):
+        message = message[::-1]
+        max_msglength = target_length - 11
+        msglength = len(message)
+        padding = b''
+        padding_length = target_length - msglength - 3
+        for i in range(padding_length):
+            padding += b'\x00'
+        return b''.join([b'\x00\x00', padding, b'\x00', message])
+
+    @staticmethod
+    def _encrypt_rsa(message, pub_key):
+        keylength = rsa.common.byte_size(pub_key.n)
+        padded = Utils._pad_for_encryption_rsa(message, keylength)
+        payload = rsa.transform.bytes2int(padded)
+        encrypted = rsa.core.encrypt_int(payload, pub_key.e, pub_key.n)
+        block = rsa.transform.int2bytes(encrypted, keylength)
+        return block
+
+    @staticmethod
+    def log(content):
+        print(Utils.getTimeStr() + ' ' + "V%s" %
+              (Utils.getYmlConfig()['Version']) + ' ' + str(content))
+        sys.stdout.flush()
+
+    @staticmethod
+    def getTimeStr():
+        utc_dt = datetime.utcnow().replace(tzinfo=timezone.utc)
+        bj_dt = utc_dt.astimezone(timezone(timedelta(hours=8)))
+        return bj_dt.strftime("%Y-%m-%d %H:%M:%S")
