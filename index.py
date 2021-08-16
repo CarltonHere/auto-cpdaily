@@ -24,8 +24,7 @@ def getTimeStr():
 
 
 def log(content):
-    print(getTimeStr() + ' ' + "V%s" % (getYmlConfig()['Version']) + ' ' +
-          str(content))
+    print(getTimeStr() + " V%s %s" % (getYmlConfig()['Version'], content))
     sys.stdout.flush()
 
 

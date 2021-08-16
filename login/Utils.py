@@ -125,8 +125,7 @@ class Utils:
 
     @staticmethod
     def log(content):
-        print(Utils.getTimeStr() + ' ' + "V%s" %
-              (Utils.getYmlConfig()['Version']) + ' ' + str(content))
+        print(Utils.getTimeStr() + " V%s %s" % (Utils.getYmlConfig()['Version'], content))
         sys.stdout.flush()
 
     @staticmethod
