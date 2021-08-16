@@ -47,7 +47,9 @@ class kmuLogin:
         # 如果等于302强制跳转，代表登陆成功
         if data.status_code == 302:
             jump_url = data.headers['Location']
-            self.session.post(jump_url, verify=False)
+            res = self.session.post(jump_url, verify=False)
+            if res.url.find('campusphere.net/') == -1:
+                raise Exception('CAS登陆失败,未能成功跳转今日校园!')
             return self.session.cookies
         elif data.status_code == 200:
             data = data.text

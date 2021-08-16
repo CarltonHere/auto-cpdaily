@@ -57,7 +57,7 @@ class wiseLoginService:
                     clientUrl = ampUrl2
                 else:
                     raise Exception('未找到客户端登录地址')
-                res = self.session.get(clientUrl)
+                res = self.session.get(clientUrl, verify=False)
                 self.campus_host = re.findall('\w{4,5}\:\/\/.*?\/',
                                               clientUrl)[0]
                 self.login_url = res.url
