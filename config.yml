@@ -21,6 +21,11 @@ notifyOption:
     qmsgOption: #############完善qmsgKey即可,需要完善-user字段中qId参数，详见下方例子
         key: ''
         baseUrl: 'https://qmsg.zendee.cn/'
+    # 企业微信配置
+    qywxOption:
+        corpid: ''
+        corpsecret: ''
+
 # 默认不填，如需使用先开通腾讯云OCR服务，再申请API密钥
 ocrOption:
     SecretId: 'APIid'
@@ -53,6 +58,10 @@ users:
             qId:
                 type: 0
                 id: ''
+            #qywx 为企业微信应用参数，非企业微信应用推送可不填 ，touser默认@all推送所有人，agentid请到企业微信官网查看对应应用
+            qywx:
+                touser: '@all'
+                agentid: ''
         # 附上经纬度查询地址（请自行选择自己的学校地址，address，lon，lat都要填查询到的）：http://api.map.baidu.com/lbsapi/getpoint/index.html
         #lon 经度
         lon: 104.616858
@@ -105,6 +114,9 @@ users:
             qId:
                 type: 0
                 id: ''
+            qywx:
+                touser: '@all'
+                agentid: ''            
         # 附上经纬度查询地址（请自行选择自己的学校地址，address，lon，lat都要填查询到的）：http://api.map.baidu.com/lbsapi/getpoint/index.html
         # 经纬度信息
         lon: 104.6191824
@@ -158,6 +170,9 @@ users:
             qId:
                 type: 0
                 id: ''
+            qywx:
+                touser: '@all'
+                agentid: ''
         # 附上经纬度查询地址（请自行选择自己的学校地址，address，lon，lat都要填查询到的）：http://api.map.baidu.com/lbsapi/getpoint/index.html
         #lon 经度
         lon: 114.244845
@@ -205,6 +220,9 @@ users:
             qId:
                 type: 0
                 id: ''
+            qywx:
+                touser: '@all'
+                agentid: ''
         # 附上经纬度查询地址（请自行选择自己的学校地址，address，lon，lat都要填查询到的）：http://api.map.baidu.com/lbsapi/getpoint/index.html
         #lon 经度
         lon: 105.895856

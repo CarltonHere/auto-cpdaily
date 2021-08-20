@@ -30,6 +30,8 @@ class pushKit:
                 return self.sendMsgByQmsg(userOption['qId'], title, msg)
         if method == 0:
             return '消息推送服务未启用'
+        if method == 4:
+            return self.sendMsgByQyWx(userOption['qywx'], title, msg)
         return '推送参数配置错误，已取消发送！'
 
     # 发送邮件消息
@@ -99,5 +101,36 @@ class pushKit:
             return 'qmsg推送成功'
         else:
             return 'qmsg推送失败,' + res['reason']
+
+    #企业微信应用推送
+    def sendMsgByQyWx(self, user_info, title, message):
+        wxConfig = self.option['qywxOption']
+        def get_access_token(wxConfig):
+            get_token_url = 'https://qyapi.weixin.qq.com/cgi-bin/gettoken'
+            response = requests.get(get_token_url, params=wxConfig).json()
+            if response.get('access_token'):
+                return response['access_token']
+            else:
+                print(response)
+                return '获取access_token失败'
+        if wxConfig['corpid'] and wxConfig['corpsecret']:
+            try:
+                access_token = get_access_token(wxConfig)
+                if isinstance(access_token, str):
+                    user_info['text'] = {'content': f'{title}:\n\n{message}'}
+                    url = f'https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token={access_token}'
+                    response = requests.post(url=url, json=user_info).json()
+                    # print(response)
+                    return True if response['errmsg'] == 'ok' else response
+                else:
+                    print(access_token)
+                    return access_token
+            except Exception as e:
+                print('推送失败:', e)
+
+        elif self.method != 4:
+            pass
+        else:
+            return '企业微信应用配置错误，请检查qywxOption'
 
     # 其他通知方式待添加
