@@ -3,7 +3,7 @@ import json
 import re
 import uuid
 from pyDes import des, CBC, PAD_PKCS5
-from requests_toolbelt import MultipartEncoder
+from login.Utils import Utils
 from login.wiseLoginService import wiseLoginService
 
 
@@ -55,57 +55,12 @@ class AutoSign:
                                 verify=False).json()
         self.task = res['datas']
 
-    # 上传图片到阿里云oss
-    def uploadPicture(self):
-        url = f'{self.host}wec-counselor-sign-apps/stu/oss/getUploadPolicy'
-        res = self.session.post(url=url,
-                                headers={'content-type': 'application/json'},
-                                data=json.dumps({'fileType': 1}),
-                                verify=False)
-        datas = res.json().get('datas')
-        fileName = datas.get('fileName')
-        policy = datas.get('policy')
-        accessKeyId = datas.get('accessid')
-        signature = datas.get('signature')
-        policyHost = datas.get('host')
-        headers = {
-            'User-Agent':
-            'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:50.0) Gecko/20100101 Firefox/50.0'
-        }
-        multipart_encoder = MultipartEncoder(
-            fields={  # 这里根据需要进行参数格式设置
-                'key': fileName,
-                'policy': policy,
-                'OSSAccessKeyId': accessKeyId,
-                'success_action_status': '200',
-                'signature': signature,
-                'file': ('blob', open(self.userInfo['photo'], 'rb'),
-                         'image/jpg')
-            })
-        headers['Content-Type'] = multipart_encoder.content_type
-        res = self.session.post(url=policyHost,
-                                headers=headers,
-                                data=multipart_encoder)
-        self.fileName = fileName
-
-    # 获取图片上传位置
-    def getPictureUrl(self):
-        url = f'{self.host}wec-counselor-sign-apps/stu/sign/previewAttachment'
-        params = {'ossKey': self.fileName}
-        res = self.session.post(url=url,
-                                headers={'content-type': 'application/json'},
-                                data=json.dumps(params),
-                                verify=False)
-        photoUrl = res.json().get('datas')
-        return photoUrl
-
     # 填充表单
     def fillForm(self):
         # 判断签到是否需要照片
         if self.task['isPhoto'] == 1:
-            self.uploadPicture()
-            self.form['signPhotoUrl'] = self.getPictureUrl()
-            # self.form['signPhotoUrl'] = 'https://www.campushoy.com/wp-content/uploads/2019/06/cropped-hoy.png'
+            Utils.uploadPicture(self, 'sign', self.userInfo['photo'])
+            self.form['signPhotoUrl'] = Utils.getPictureUrl(self, 'sign')
         else:
             self.form['signPhotoUrl'] = ''
         self.form['isNeedExtra'] = self.task['isNeedExtra']

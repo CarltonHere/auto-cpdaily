@@ -3,6 +3,7 @@ import json
 import re
 import uuid
 from pyDes import PAD_PKCS5, des, CBC
+from login.Utils import Utils
 from login.wiseLoginService import wiseLoginService
 
 
@@ -22,13 +23,13 @@ class Collection:
         headers = self.session.headers
         headers['Content-Type'] = 'application/json'
         queryUrl = f'{self.host}wec-counselor-collector-apps/stu/collector/queryCollectorProcessingList'
-        params = {'pageSize': 6, "pageNumber": 1}
+        params = {'pageSize': 20, "pageNumber": 1}
         res = self.session.post(queryUrl,
                                 data=json.dumps(params),
                                 headers=headers,
                                 verify=False).json()
         if len(res['datas']['rows']) < 1:
-            raise Exception('查询表单失败，请确认你是信息收集并且当前有收集任务。确定请联系开发者')
+            raise Exception('当前暂时没有未完成的信息收集哦！')
         self.collectWid = res['datas']['rows'][0]['wid']
         self.formWid = res['datas']['rows'][0]['formWid']
         detailUrl = f'{self.host}wec-counselor-collector-apps/stu/collector/detailCollector'
@@ -55,42 +56,66 @@ class Collection:
     def fillForm(self):
         index = 0
         for formItem in self.form[:]:
-            # 只处理必填项
-            if formItem['isRequired'] == 1:
-                userForm = self.userInfo['forms'][index]['form']
-                # 判断用户是否需要检查标题
-                if self.userInfo['checkTitle'] == 1:
-                    # 如果检查到标题不相等
-                    if formItem['title'] != userForm['title']:
-                        raise Exception(
-                            f'\r\n第{index + 1}个配置项的标题不正确\r\n您的标题为：{userForm["title"]}\r\n系统的标题为：{formItem["title"]}'
-                        )
-                # 文本选项直接赋值
-                if formItem['fieldType'] == 1 or formItem['fieldType'] == 5:
-                    formItem['value'] = userForm['value']
-                # 单选框填充
-                elif formItem['fieldType'] == 2:
-                    formItem['value'] = userForm['value']
-                    # 单选需要移除多余的选项
-                    fieldItems = formItem['fieldItems']
-                    for fieldItem in fieldItems[:]:
-                        if fieldItem['content'] != userForm['value']:
-                            fieldItems.remove(fieldItem)
-                # 多选填充
-                elif formItem['fieldType'] == 3:
-                    fieldItems = formItem['fieldItems']
-                    userItems = userForm['value'].split('|')
-                    for fieldItem in fieldItems[:]:
-                        if fieldItem['content'] in userItems:
-                            formItem['value'] += fieldItem['content'] + ' '
-                        else:
-                            fieldItems.remove(fieldItem)
-                if formItem['fieldType'] == 4:
-                    pass
-                index += 1
+            if self.userInfo['onlyRequired'] == 1:
+                if not formItem['isRequired']:
+                    # 移除非必填选项
+                    self.form.remove(formItem)
+                    continue
+            userForm = self.userInfo['forms'][index]['form']
+            # 判断用户是否需要检查标题
+            if self.userInfo['checkTitle'] == 1:
+                # 如果检查到标题不相等
+                if formItem['title'] != userForm['title']:
+                    raise Exception(
+                        f'\r\n第{index + 1}个配置项的标题不正确\r\n您的标题为：{userForm["title"]}\r\n系统的标题为：{formItem["title"]}'
+                    )
+            # 文本选项直接赋值
+            if formItem['fieldType'] in ['1', '5', '6', '7']:
+                formItem['value'] = userForm['value']
+            # 单选框填充
+            elif formItem['fieldType'] == '2':
+                # 单选需要移除多余的选项
+                fieldItems = formItem['fieldItems']
+                for fieldItem in fieldItems[:]:
+                    if fieldItem['content'] == userForm['value']:
+                        formItem['value'] = fieldItem['itemWid']
+                        if fieldItem['isOtherItems'] and fieldItem[
+                                'otherItemType'] == '1':
+                            if 'extra' not in userForm:
+                                raise Exception(
+                                    f'\r\n第{index + 1}个配置项的选项不正确,该选项需要extra字段'
+                                )
+                            fieldItem['contentExtend'] = userForm['extra']
+                    else:
+                        fieldItems.remove(fieldItem)
+                if len(fieldItems) != 1:
+                    raise Exception(f'\r\n第{index + 1}个配置项的选项不正确,该选项为必填单选')
+            # 多选填充
+            elif formItem['fieldType'] == '3':
+                fieldItems = formItem['fieldItems']
+                userItems = userForm['value'].split('|')
+                tempValue = []
+                for fieldItem in fieldItems[:]:
+                    if fieldItem['content'] in userItems:
+                        tempValue.append(fieldItem['itemWid'])
+                        if fieldItem['isOtherItems'] and fieldItem[
+                                'otherItemType'] == '1':
+                            if 'extra' not in userForm:
+                                raise Exception(
+                                    f'\r\n第{index + 1}个配置项的选项不正确,该选项需要extra字段'
+                                )
+                            fieldItem['contentExtend'] = userForm['extra']
+                    else:
+                        fieldItems.remove(fieldItem)
+                if len(fieldItems) == 0:
+                    raise Exception(f'\r\n第{index + 1}个配置项的选项不正确,该选项为必填多选')
+                formItem['value'] = ','.join(tempValue)
+            elif formItem['fieldType'] == '4':
+                Utils.uploadPicture(self, 'collector', userForm['value'])
+                formItem['value'] = Utils.getPictureUrl(self, 'collector')
             else:
-                # 移除非必填选项
-                self.form.remove(formItem)
+                raise Exception(f'\r\n第{index + 1}个配置项的类型未适配')
+            index += 1
 
     # 提交表单
     def submitForm(self):
@@ -122,7 +147,9 @@ class Collection:
             "collectWid": self.collectWid,
             "schoolTaskWid": self.schoolTaskWid,
             "form": self.form,
-            "uaIsCpadaily": True
+            "uaIsCpadaily": True,
+            "latitude": self.userInfo['lat'],
+            'longitude': self.userInfo['lon']
         }
         submitUrl = f'{self.host}wec-counselor-collector-apps/stu/collector/submitForm'
         data = self.session.post(submitUrl,

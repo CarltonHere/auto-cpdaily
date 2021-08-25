@@ -12,6 +12,7 @@ from tencentcloud.common.profile.client_profile import ClientProfile
 from tencentcloud.common.profile.http_profile import HttpProfile
 from tencentcloud.ocr.v20181119 import ocr_client, models
 from datetime import datetime, timedelta, timezone
+from requests_toolbelt import MultipartEncoder
 
 
 class Utils:
@@ -125,7 +126,8 @@ class Utils:
 
     @staticmethod
     def log(content):
-        print(Utils.getTimeStr() + " V%s %s" % (Utils.getYmlConfig()['Version'], content))
+        print(Utils.getTimeStr() + " V%s %s" %
+              (Utils.getYmlConfig()['Version'], content))
         sys.stdout.flush()
 
     @staticmethod
@@ -133,3 +135,48 @@ class Utils:
         utc_dt = datetime.utcnow().replace(tzinfo=timezone.utc)
         bj_dt = utc_dt.astimezone(timezone(timedelta(hours=8)))
         return bj_dt.strftime("%Y-%m-%d %H:%M:%S")
+
+    # 上传图片到阿里云oss
+    @staticmethod
+    def uploadPicture(env, type, picSrc):
+        url = f'{env.host}wec-counselor-{type}-apps/stu/oss/getUploadPolicy'
+        res = env.session.post(url=url,
+                               headers={'content-type': 'application/json'},
+                               data=json.dumps({'fileType': 1}),
+                               verify=False)
+        datas = res.json().get('datas')
+        fileName = datas.get('fileName')
+        policy = datas.get('policy')
+        accessKeyId = datas.get('accessid')
+        signature = datas.get('signature')
+        policyHost = datas.get('host')
+        headers = {
+            'User-Agent':
+            'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:50.0) Gecko/20100101 Firefox/50.0'
+        }
+        multipart_encoder = MultipartEncoder(
+            fields={  # 这里根据需要进行参数格式设置
+                'key': fileName,
+                'policy': policy,
+                'OSSAccessKeyId': accessKeyId,
+                'success_action_status': '200',
+                'signature': signature,
+                'file': ('blob', open(picSrc, 'rb'), 'image/jpg')
+            })
+        headers['Content-Type'] = multipart_encoder.content_type
+        env.session.post(url=policyHost,
+                         headers=headers,
+                         data=multipart_encoder)
+        env.fileName = fileName
+
+    # 获取图片上传位置
+    @staticmethod
+    def getPictureUrl(env, type):
+        url = f'{env.host}wec-counselor-{type}-apps/stu/{type}/previewAttachment'
+        params = {'ossKey': env.fileName}
+        res = env.session.post(url=url,
+                               headers={'content-type': 'application/json'},
+                               data=json.dumps(params),
+                               verify=False)
+        photoUrl = res.json().get('datas')
+        return photoUrl

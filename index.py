@@ -29,7 +29,7 @@ def log(content):
 
 
 def main():
-    log("签到任务开始执行")
+    log("自动化任务开始执行")
     config = getYmlConfig()
     push = pushKit(config['notifyOption'])
     for user in config['users']:
@@ -56,7 +56,7 @@ def main():
                     '今日校园签到失败通知', '服务器(V%s)于%s尝试签到失败!\n错误信息:%s' %
                     (config['Version'], ntm, msg), user['user'])
             log(msg)
-    log("签到任务执行完毕")
+    log("自动化任务执行完毕")
 
 
 def working(user):
