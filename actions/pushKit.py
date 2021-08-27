@@ -13,11 +13,11 @@ class pushKit:
 
     def sendMsg(self, title, msg, user=''):
         if ('notifyOption' not in user):
-            return '该用户未配置推送，已取消发送！'
+            return '该用户未配置推送,已取消发送！'
         if ('rcvAcc' not in user['notifyOption']):
-            return '该用户未配置推送，已取消发送！'
+            return '该用户未配置推送,已取消发送！'
         if (user['notifyOption']['rcvAcc'] == ""):
-            return '该用户未配置推送，已取消发送！'
+            return '该用户未配置推送,已取消发送！'
 
         userOption = user['notifyOption']
         # 获取接收账号
@@ -42,38 +42,39 @@ class pushKit:
         if method == 5:
             return self.sendMsgByQyWx(rcvAcc, title, msg)
 
-        return '推送参数配置错误，已取消发送！'
+        return '推送参数配置错误,已取消发送！'
 
     # 发送邮件消息
     def sendMsgByMailApi(self, mail, title, msg):
         if mail == '':
-            return '邮箱为空，已取消发送邮件！'
+            return '邮箱为空,已取消邮箱API发送！'
         if self.option['mailApiUrl'] == '':
-            return '邮件API为空，设置邮件API后才能发送邮件'
+            return '邮件API为空,设置邮件API后才能发送邮件'
         # 以下部分需要根据不同接口自行修改
         params = {'reciever': mail, 'title': title, 'content': msg}
-        res = requests.post(url=self.option['mailApiUrl'], params=params).json()
-        return res['message']
+        res = requests.post(url=self.option['mailApiUrl'],
+                            params=params).json()
+        return "邮箱API%s" % (res['message'])
 
         # smtp本地邮件接口
     def sendMsgBySmtp(self, mail, title, msg):
-        ret = "邮件发送成功"
+        ret = "SMTP邮件发送成功"
         try:
             if mail == '':
-                return '邮箱为空，已取消发送邮件！'
+                return '邮箱为空，已取消SMTP发送！'
             # 发信方的信息：发信邮箱，邮箱授权码
             from_addr = self.option['smtpOption']['userName']  # 发信方邮箱账号
             password = self.option['smtpOption']['passWord']  # 发信方邮箱密码
             if from_addr == '':
-                return '发信邮箱地址为空，已取消发送邮件！'
+                return '发信邮箱地址为空,已取消SMTP发送！'
             if password == '':
-                return '发信邮箱密码为空，已取消发送邮件！'
+                return '发信邮箱密码为空,已取消SMTP发送！'
             # 收信方邮箱
             to_addr = mail
             # 发信服务器
             smtp_server = self.option['smtpOption']['server']
             if smtp_server == '':
-                return '发信邮箱服务器为空，已取消发送邮件！'
+                return '发信邮箱服务器为空,已取消SMTP发送！'
             # 邮箱正文内容，第一个参数为内容，第二个参数为格式(plain 为纯文本)，第三个参数为编码
             msg = MIMEText(msg, 'plain', 'utf-8')
             # 邮件头信息
@@ -91,15 +92,15 @@ class pushKit:
             server.sendmail(from_addr, to_addr, msg.as_string())
             # 关闭服务器
             server.quit()
-        except Exception:  #如果try中的语句没有执行，则会执行下面的ret=False
-            ret = "邮件发送失败"
+        except Exception as e:  #如果try中的语句没有执行，则会执行下面的ret=False
+            ret = "SMTP邮件发送失败,%s" % (e)
         return ret
 
     def sendMsgByQmsg(self, qId, title, msg):
         if self.option['qmsgOption']['key'] == '':
-            return 'qmsg的key为空，已取消发送消息！'
+            return 'QMSG的key为空,已取消发送消息！'
         if self.option['qmsgOption']['baseUrl'] == '':
-            return 'qmsg的baseUrl为空，设置baseUrl后才能发送邮件'
+            return 'QMSG的baseUrl为空,设置baseUrl后才能发送邮件'
         if qId['type'] == 1:
             url = self.option['qmsgOption'][
                 'baseUrl'] + "group/" + self.option['qmsgOption']['key']
@@ -109,9 +110,9 @@ class pushKit:
         params = {'msg': title + "\n" + msg, 'qq': qId['id']}
         res = requests.post(url, params=params).json()
         if (res['success'] == True):
-            return 'qmsg推送成功'
+            return 'QMSG推送成功'
         else:
-            return 'qmsg推送失败,' + res['reason']
+            return 'QMSG推送失败,' + res['reason']
 
     #企业微信应用推送
     def sendMsgByQyWx(self, rcvAcc, title, message):
@@ -124,7 +125,7 @@ class pushKit:
                 return response['access_token']
             else:
                 print(response)
-                return '获取access_token失败'
+                return '获取access_token失败,已取消企业微信推送'
 
         if wxConfig['corpid'] and wxConfig['corpsecret']:
             try:
@@ -147,8 +148,8 @@ class pushKit:
                     print(access_token)
                     return access_token
             except Exception as e:
-                print('推送失败:', e)
+                return '企业微信推送失败,%s' % (e)
         else:
-            return '企业微信应用配置错误，请检查qywxOption'
+            return '企业微信应用配置错误,请检查qywxOption'
 
     # 其他通知方式待添加

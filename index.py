@@ -46,10 +46,15 @@ def main():
             if ret == True:
                 #此处需要注意就算提示成功也不一定是真的成功，以实际为准
                 log(msg)
-                msg = push.sendMsg(
-                    '今日校园签到成功通知',
-                    '服务器(V%s)于%s尝试签到成功!' % (config['Version'], ntm),
-                    user['user'])
+                if 'SUCCESS' in msg:
+                    msg = push.sendMsg(
+                        '今日校园签到成功通知',
+                        '服务器(V%s)于%s尝试签到成功!' % (config['Version'], ntm),
+                        user['user'])
+                else:
+                    msg = push.sendMsg(
+                        '今日校园签到异常通知', '服务器(V%s)于%s尝试签到异常!\n异常信息:%s' %
+                        (config['Version'], ntm, msg), user['user'])
             else:
                 log("Error:" + msg)
                 msg = push.sendMsg(

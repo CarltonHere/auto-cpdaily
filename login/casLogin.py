@@ -1,5 +1,6 @@
 import re
 import requests
+import urllib.parse
 from bs4 import BeautifulSoup
 from urllib3.exceptions import InsecureRequestWarning
 from login.Utils import Utils
@@ -16,6 +17,11 @@ class casLogin:
         self.host = host
         self.session = session
         self.type = 0
+        self.headers = {
+            'User-Agent':
+            'Mozilla/5.0 (Linux; U; Android 8.1.0; zh-cn; BLA-AL00 Build/HUAWEIBLA-AL00) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/57.0.2987.132 MQQBrowser/8.9 Mobile Safari/537.36',
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }
 
     # 判断是否需要验证码
     def getNeedCaptchaUrl(self):
@@ -76,7 +82,8 @@ class casLogin:
                     params['captcha'] = Utils.getCodeFromImg(
                         self.session, imgUrl)
         data = self.session.post(self.login_url,
-                                 params=params,
+                                 data=urllib.parse.urlencode(params),
+                                 headers=self.headers,
                                  allow_redirects=False)
         # 如果等于302强制跳转，代表登陆成功
         if data.status_code == 302:

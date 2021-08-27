@@ -30,8 +30,12 @@ class Collection:
                                 verify=False).json()
         if len(res['datas']['rows']) < 1:
             raise Exception('当前暂时没有未完成的信息收集哦！')
-        self.collectWid = res['datas']['rows'][0]['wid']
-        self.formWid = res['datas']['rows'][0]['formWid']
+        for item in res['datas']['rows']:
+            if item['isHandled'] == 0:
+                self.collectWid = item['wid']
+                self.formWid = item['formWid']
+        if (self.formWid == None):
+            raise Exception('当前暂时没有未完成的信息收集哦！')
         detailUrl = f'{self.host}wec-counselor-collector-apps/stu/collector/detailCollector'
         res = self.session.post(detailUrl,
                                 headers=headers,
@@ -83,8 +87,7 @@ class Collection:
                                 'otherItemType'] == '1':
                             if 'extra' not in userForm:
                                 raise Exception(
-                                    f'\r\n第{index + 1}个配置项的选项不正确,该选项需要extra字段'
-                                )
+                                    f'\r\n第{index + 1}个配置项的选项不正确,该选项需要extra字段')
                             fieldItem['contentExtend'] = userForm['extra']
                     else:
                         fieldItems.remove(fieldItem)
@@ -102,8 +105,7 @@ class Collection:
                                 'otherItemType'] == '1':
                             if 'extra' not in userForm:
                                 raise Exception(
-                                    f'\r\n第{index + 1}个配置项的选项不正确,该选项需要extra字段'
-                                )
+                                    f'\r\n第{index + 1}个配置项的选项不正确,该选项需要extra字段')
                             fieldItem['contentExtend'] = userForm['extra']
                     else:
                         fieldItems.remove(fieldItem)
