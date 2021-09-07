@@ -37,13 +37,17 @@ class casLogin:
     def login(self):
         html = self.session.get(self.login_url, verify=False).text
         soup = BeautifulSoup(html, 'lxml')
-        form = soup.select('#casLoginForm')
-        if (len(form) == 0):
-            form = soup.select('#loginFromId')
-            if (len(form) == 0):
-                raise Exception('出错啦！网页中没有找到LoginForm')
-            soup = BeautifulSoup(str(form[1]), 'lxml')
+        if len(soup.select('#casLoginForm')) > 0:
+            self.type = 0
+        elif len(soup.select('#loginFromId')) > 0:
+            soup = BeautifulSoup(str(soup.select('#loginFromId')[1]), 'lxml')
             self.type = 1
+        elif len(soup.select('#fm1')) > 0:
+            soup = BeautifulSoup(str(soup.select('#fm1')[0]), 'lxml')
+            self.type = 2
+        else:
+            raise Exception('出错啦！网页中没有找到LoginForm')
+
         # 填充数据
         params = {}
         form = soup.select('input')
@@ -54,24 +58,35 @@ class casLogin:
                         params[item.get('name')] = ''
                     else:
                         params[item.get('name')] = item.get('value')
-        if (self.type == 0):
-            salt = soup.select("#pwdDefaultEncryptSalt")
-        else:
-            salt = soup.select("#pwdEncryptSalt")
-        if (len(salt) != 0):
-            salt = salt[0].get('value')
-        else:
-            pattern = '\"(\w{16})\"'
-            salt = re.findall(pattern, html)
-            if (len(salt) == 1):
-                salt = salt[0]
-            else:
-                salt = False
         params['username'] = self.username
-        if not salt:
-            params['password'] = self.password
+
+        # 获取密钥
+        if self.type == 2:
+            pattern = 'RSAKeyPair\((.*?)\);'
+            publicKey = re.findall(pattern, html)
+            publicKey = publicKey[0].replace('"', "").split(',')
+            params['password'] = Utils.encryptRSA(self.password, publicKey[2],
+                                                  publicKey[0])
+            params['captcha'] = Utils.getCodeFromImg(
+                self.session, self.host + 'lyuapServer/captcha.jsp')
         else:
-            params['password'] = Utils.encryptAES(self.password, salt)
+            if self.type == 0:
+                salt = soup.select("#pwdDefaultEncryptSalt")
+            else:
+                salt = soup.select("#pwdEncryptSalt")
+            if len(salt) != 0:
+                salt = salt[0].get('value')
+            else:
+                pattern = '\"(\w{16})\"'
+                salt = re.findall(pattern, html)
+                if len(salt) == 1:
+                    salt = salt[0]
+                else:
+                    salt = False
+            if not salt:
+                params['password'] = self.password
+            else:
+                params['password'] = Utils.encryptAES(self.password, salt)
             if self.getNeedCaptchaUrl():
                 if self.type == 0:
                     imgUrl = self.host + 'authserver/captcha.html'
@@ -97,8 +112,10 @@ class casLogin:
             soup = BeautifulSoup(data, 'lxml')
             if self.type == 0:
                 msg = soup.select('#errorMsg')[0].get_text()
-            else:
+            elif self.type == 1:
                 msg = soup.select('#formErrorTip2')[0].get_text()
+            elif self.type == 2:
+                msg = soup.select('#msg')[0].get_text()
             raise Exception(msg)
         else:
             raise Exception('CAS登陆失败！返回状态码：' + str(data.status_code))

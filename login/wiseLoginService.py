@@ -3,7 +3,6 @@ import requests
 from urllib3.exceptions import InsecureRequestWarning
 from login.casLogin import casLogin
 from login.iapLogin import iapLogin
-from login.kmuLogin import kmuLogin
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
@@ -71,11 +70,6 @@ class wiseLoginService:
     def checkLogin(self):
         if self.login_type == 'CLOUD':
             self.loginEntity = iapLogin(self.username, self.password,
-                                        self.login_url, self.login_host,
-                                        self.session)
-            self.session.cookies = self.loginEntity.login()
-        elif self.login_url.find('kmu.edu.cn') != -1:
-            self.loginEntity = kmuLogin(self.username, self.password,
                                         self.login_url, self.login_host,
                                         self.session)
             self.session.cookies = self.loginEntity.login()

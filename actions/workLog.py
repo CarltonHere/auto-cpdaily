@@ -26,9 +26,10 @@ class workLog:
         # 首先 获取 templateName=疫情采集（每天上报）新 的wid：37
         url = f'{self.host}wec-counselor-worklog-apps/worklog/template/listActiveTemplate'
         params = {'pageNumber': '1', 'pageSize': '9999999', 'status': '1'}
-        res = self.session.post(url, data=json.dumps(params),
-                                verify=False).json()
-        self.collectWid = res['datas']['rows'][0]['wid']
+        res = self.session.post(url, data=json.dumps(params), verify=False)
+        if res.status_code == 401:
+            raise Exception('您无权获取工作日志列表')
+        self.collectWid = res.json()['datas']['rows'][0]['wid']
         url = f'{self.host}wec-counselor-worklog-apps/worklog/list'
         params = {
             'formWid': self.collectWid,
@@ -83,7 +84,7 @@ class workLog:
                             if userItems[i]['form']['title'] != formItem[
                                     'title']:
                                 raise Exception(
-                                    f'\r\n第{i + 1}个配置出错了\r\n您的标题为：{userItems[i]["form"]["title"]}\r\n系统的标题为：{formItem["title"]}'
+                                    f'\r\n第{i + 1}个配置出错了\r\n您的标题为：[{userItems[i]["form"]["title"]}]\r\n系统的标题为：[{formItem["title"]}]'
                                 )
                         # 文本选项直接赋值
                         formItem['value'] = userItems[i]['form']['value']

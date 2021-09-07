@@ -59,8 +59,9 @@ class Collection:
     # 填写表单
     def fillForm(self):
         index = 0
+        onlyRequired = self.userInfo['onlyRequired'] if 'onlyRequired' in self.userInfo else 1
         for formItem in self.form[:]:
-            if self.userInfo['onlyRequired'] == 1:
+            if onlyRequired == 1:
                 if not formItem['isRequired']:
                     # 移除非必填选项
                     self.form.remove(formItem)
@@ -71,7 +72,7 @@ class Collection:
                 # 如果检查到标题不相等
                 if formItem['title'] != userForm['title']:
                     raise Exception(
-                        f'\r\n第{index + 1}个配置项的标题不正确\r\n您的标题为：{userForm["title"]}\r\n系统的标题为：{formItem["title"]}'
+                        f'\r\n第{index + 1}个配置项的标题不正确\r\n您的标题为：[{userForm["title"]}]\r\n系统的标题为：[{formItem["title"]}]'
                     )
             # 文本选项直接赋值
             if formItem['fieldType'] in ['1', '5', '6', '7']:

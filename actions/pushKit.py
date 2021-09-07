@@ -12,11 +12,11 @@ class pushKit:
         self.type = option['method']
 
     def sendMsg(self, title, msg, user=''):
-        if ('notifyOption' not in user):
+        if 'notifyOption' not in user:
             return '该用户未配置推送,已取消发送！'
-        if ('rcvAcc' not in user['notifyOption']):
+        if 'rcvAcc' not in user['notifyOption']:
             return '该用户未配置推送,已取消发送！'
-        if (user['notifyOption']['rcvAcc'] == ""):
+        if user['notifyOption']['rcvAcc'] == "":
             return '该用户未配置推送,已取消发送！'
 
         userOption = user['notifyOption']
@@ -25,7 +25,7 @@ class pushKit:
         # 获取全局推送模式
         method = self.type
         # 获取用户指定的推送模式
-        if ('method' in userOption):
+        if 'method' in userOption:
             method = userOption['method']
 
         # 判断推送类型
@@ -109,7 +109,7 @@ class pushKit:
                 'qmsgOption']['key']
         params = {'msg': title + "\n" + msg, 'qq': qId['id']}
         res = requests.post(url, params=params).json()
-        if (res['success'] == True):
+        if res['success'] == True:
             return 'QMSG推送成功'
         else:
             return 'QMSG推送失败,' + res['reason']

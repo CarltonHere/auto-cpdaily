@@ -36,9 +36,9 @@ class AutoSign:
         if len(res['datas']['unSignedTasks']) < 1:
             if len(res['datas']['leaveTasks']) < 1:
                 raise Exception('当前暂时没有未签到的任务哦！')
-            latestTask = res['datas']['leaveTasks'][-1]
+            latestTask = res['datas']['leaveTasks'][0]
         else:
-            latestTask = res['datas']['unSignedTasks'][-1]
+            latestTask = res['datas']['unSignedTasks'][0]
         self.taskInfo = {
             'signInstanceWid': latestTask['signInstanceWid'],
             'signWid': latestTask['signWid']
@@ -74,7 +74,7 @@ class AutoSign:
                 if self.userInfo['checkTitle'] == 1:
                     if userItem['title'] != extraField['title']:
                         raise Exception(
-                            f'\r\n第{i + 1}个配置出错了\r\n您的标题为：{userItem["title"]}\r\n系统的标题为：{extraField["title"]}'
+                            f'\r\n第{i + 1}个配置出错了\r\n您的标题为：[{userItem["title"]}]\r\n系统的标题为：[{extraField["title"]}]'
                         )
                 extraFieldItems = extraField['extraFieldItems']
                 flag = False
@@ -95,7 +95,7 @@ class AutoSign:
                                     extraFieldItemValue)
                             else:
                                 raise Exception(
-                                    f'\r\n第{ i + 1 }个配置出错了\r\n表单未找到你设置的值：{userItem["value"]},\r\n该选项需要extra字段'
+                                    f'\r\n第{ i + 1 }个配置出错了\r\n表单未找到你设置的值：[{userItem["value"]}],\r\n该选项需要extra字段'
                                 )
                         else:
                             flag = True
@@ -106,14 +106,15 @@ class AutoSign:
                             extraFieldItemValues.append(extraFieldItemValue)
                 if not flag:
                     raise Exception(
-                        f'\r\n第{ i + 1 }个配置出错了\r\n表单未找到你设置的值：{userItem["value"]},\r\n你上次系统选的值为：{ data }'
+                        f'\r\n第{ i + 1 }个配置出错了\r\n表单未找到你设置的值：[{userItem["value"]}],\r\n你上次系统选的值为：[{data}]'
                     )
             self.form['extraFieldItems'] = extraFieldItemValues
         self.form['signInstanceWid'] = self.task['signInstanceWid']
         self.form['longitude'] = self.userInfo['lon']
         self.form['latitude'] = self.userInfo['lat']
         self.form['isMalposition'] = self.task['isMalposition']
-        self.form['abnormalReason'] = self.userInfo['abnormalReason']
+        self.form['abnormalReason'] = self.userInfo[
+            'abnormalReason'] if 'abnormalReason' in self.userInfo else ''
         self.form['position'] = self.userInfo['address']
         self.form['uaIsCpadaily'] = True
         self.form['signVersion'] = '1.0.0'
