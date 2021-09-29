@@ -5,6 +5,7 @@ from actions.workLog import workLog
 from actions.sleepCheck import sleepCheck
 from actions.pushKit import pushKit
 from login.Utils import Utils
+from time import sleep
 
 
 def main():
@@ -12,6 +13,8 @@ def main():
     config = Utils.getYmlConfig()
     push = pushKit(config['notifyOption'])
     for user in config['users']:
+        Utils.log(f"10s后开始执行用户{user['user']['username'] if user['user']['username'] else '默认用户'}的任务")
+        sleep(10)
         if config['debug']:
             msg = working(user)
         else:
@@ -46,6 +49,7 @@ def main():
 def working(user):
     wise = wiseLoginService(user['user'])
     wise.login()
+    sleep(1)
     # 登陆成功，通过type判断当前属于 信息收集、签到、查寝
     # 信息收集
     if user['user']['type'] == 0:
@@ -53,30 +57,37 @@ def working(user):
         collection = Collection(wise, user['user'])
         collection.queryForm()
         collection.fillForm()
+        sleep(1)
         msg = collection.submitForm()
         return msg
     elif user['user']['type'] == 1:
         # 以下代码是签到的代码
         sign = AutoSign(wise, user['user'])
         sign.getUnSignTask()
+        sleep(1)
         sign.getDetailTask()
         sign.fillForm()
+        sleep(1)
         msg = sign.submitForm()
         return msg
     elif user['user']['type'] == 2:
         # 以下代码是查寝的代码
         check = sleepCheck(wise, user['user'])
         check.getUnSignedTasks()
+        sleep(1)
         check.getDetailTask()
         check.fillForm()
+        sleep(1)
         msg = check.submitForm()
         return msg
     elif user['user']['type'] == 3:
         # 以下代码是工作日志的代码
         work = workLog(wise, user['user'])
         work.checkHasLog()
+        sleep(1)
         work.getFormsByWids()
         work.fillForms()
+        sleep(1)
         msg = work.submitForms()
         return msg
 
