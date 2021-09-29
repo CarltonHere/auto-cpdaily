@@ -13,6 +13,7 @@ from tencentcloud.common.profile.http_profile import HttpProfile
 from tencentcloud.ocr.v20181119 import ocr_client, models
 from datetime import datetime, timedelta, timezone
 from requests_toolbelt import MultipartEncoder
+import os
 
 
 class Utils:
@@ -29,7 +30,7 @@ class Utils:
         return data
 
     @staticmethod
-    def getYmlConfig(yaml_file='config.yml'):
+    def getYmlConfig(yaml_file=os.path.join(os.path.dirname(__file__),'../config.yml')):
         file = open(yaml_file, 'r', encoding="utf-8")
         file_data = file.read()
         file.close()

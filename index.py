@@ -1,36 +1,15 @@
-import yaml
 from login.wiseLoginService import wiseLoginService
 from actions.autoSign import AutoSign
 from actions.collection import Collection
 from actions.workLog import workLog
 from actions.sleepCheck import sleepCheck
 from actions.pushKit import pushKit
-from datetime import datetime, timedelta, timezone
-import sys
-
-
-def getYmlConfig(yaml_file='config.yml'):
-    file = open(yaml_file, 'r', encoding="utf-8")
-    file_data = file.read()
-    file.close()
-    config = yaml.load(file_data, Loader=yaml.FullLoader)
-    return dict(config)
-
-
-def getTimeStr():
-    utc_dt = datetime.utcnow().replace(tzinfo=timezone.utc)
-    bj_dt = utc_dt.astimezone(timezone(timedelta(hours=8)))
-    return bj_dt.strftime("%Y-%m-%d %H:%M:%S")
-
-
-def log(content):
-    print(getTimeStr() + " V%s %s" % (getYmlConfig()['Version'], content))
-    sys.stdout.flush()
+from login.Utils import Utils
 
 
 def main():
-    log("自动化任务开始执行")
-    config = getYmlConfig()
+    Utils.log("自动化任务开始执行")
+    config = Utils.getYmlConfig()
     push = pushKit(config['notifyOption'])
     for user in config['users']:
         if config['debug']:
@@ -42,10 +21,10 @@ def main():
             except Exception as e:
                 msg = str(e)
                 ret = False
-            ntm = getTimeStr()
+            ntm = Utils.getTimeStr()
             if ret == True:
                 #此处需要注意就算提示成功也不一定是真的成功，以实际为准
-                log(msg)
+                Utils.log(msg)
                 if 'SUCCESS' in msg:
                     msg = push.sendMsg(
                         '今日校园签到成功通知',
@@ -56,12 +35,12 @@ def main():
                         '今日校园签到异常通知', '服务器(V%s)于%s尝试签到异常!\n异常信息:%s' %
                         (config['Version'], ntm, msg), user['user'])
             else:
-                log("Error:" + msg)
+                Utils.log("Error:" + msg)
                 msg = push.sendMsg(
                     '今日校园签到失败通知', '服务器(V%s)于%s尝试签到失败!\n错误信息:%s' %
                     (config['Version'], ntm, msg), user['user'])
-            log(msg)
-    log("自动化任务执行完毕")
+            Utils.log(msg)
+    Utils.log("自动化任务执行完毕")
 
 
 def working(user):

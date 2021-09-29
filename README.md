@@ -10,13 +10,20 @@
 
 ### 📗使用方法
 
-#### 🔑快速使用
+#### 🔑常规部署
 
  - 安装Python3.6+环境
  - 下载并解压项目代码包
  - 修改`config.yml`文件中的相关配置内容
  - 运行`pip install -r requirements.txt -t ./ -i https://mirrors.aliyun.com/pypi/simple`安装项目依赖
  - 执行`Python index.py`即可运行项目
+
+#### 🚀快速部署
+ - Linux环境可以直接使用下方命令一键部署
+	
+	```
+	curl -sSO https://gitee.com/icarlton/auto-cpdaily/raw/gh-pages/setup.sh && bash setup.sh
+	```
 
 #### 📅示例 腾讯云函数平台
 
@@ -38,7 +45,7 @@
  - 在编辑器上方的菜单栏中，选择`终端`>`新终端`，将下方命令粘贴到弹出的终端中并回车，等待初始化环境完成，可能需要较长时间，请耐心等待(如长时间没反应可以按下`CTRL`+`C`键强制终止，然后再次尝试)
 	
 	```
-	wget -O setup.sh https://github.com.cnpmjs.org/carltonhere/auto-cpdaily/releases/download/Initial/Setup.sh && sh setup.sh
+	curl -sSO https://gitee.com/icarlton/auto-cpdaily/raw/gh-pages/setup.sh && bash setup.sh
 	```
 	
  - 在编辑器左边的`src`目录下选择`config.yml`，配置你的用户签到信息，注意删除多余的示例并注意每行行首的缩进

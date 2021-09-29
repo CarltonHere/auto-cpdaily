@@ -142,8 +142,6 @@ class sleepCheck:
             'Host': re.findall('//(.*?)/', self.host)[0],
             'Connection': 'Keep-Alive'
         }
-        print(json.dumps(self.task))
-        print(json.dumps(self.form))
         res = self.session.post(
             f'{self.host}wec-counselor-attendance-apps/student/attendance/submitSign',
             headers=headers,
