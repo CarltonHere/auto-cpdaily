@@ -3,7 +3,7 @@ import requests
 import urllib.parse
 from bs4 import BeautifulSoup
 from urllib3.exceptions import InsecureRequestWarning
-from login.Utils import Utils
+from actions.Utils import Utils
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
@@ -19,7 +19,7 @@ class casLogin:
         self.type = 0
         self.headers = {
             'User-Agent':
-            'Mozilla/5.0 (Linux; U; Android 8.1.0; zh-cn; BLA-AL00 Build/HUAWEIBLA-AL00) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/57.0.2987.132 MQQBrowser/8.9 Mobile Safari/537.36',
+            'Mozilla/5.0 (Linux; Android 8.0.0; MI 6 Build/OPR1.170623.027; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/92.0.4515.131 Mobile Safari/537.36 okhttp/3.12.4',
             'Content-Type': 'application/x-www-form-urlencoded'
         }
 

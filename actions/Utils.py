@@ -14,6 +14,9 @@ from tencentcloud.ocr.v20181119 import ocr_client, models
 from datetime import datetime, timedelta, timezone
 from requests_toolbelt import MultipartEncoder
 import os
+from pyDes import des, CBC, PAD_PKCS5
+import re
+import uuid
 
 
 class Utils:
@@ -30,7 +33,8 @@ class Utils:
         return data
 
     @staticmethod
-    def getYmlConfig(yaml_file=os.path.join(os.path.dirname(__file__),'../config.yml')):
+    def getYmlConfig(yaml_file=os.path.join(os.path.dirname(__file__),
+                                            '../config.yml')):
         file = open(yaml_file, 'r', encoding="utf-8")
         file_data = file.read()
         file.close()
@@ -88,7 +92,7 @@ class Utils:
             code = ''
             for item in codeArray:
                 code += item['DetectedText'].replace(' ', '')
-            if len(code) == 4:
+            if len(code) > 3:
                 Utils.log('识别验证码成功')
                 return code
             else:
@@ -162,7 +166,9 @@ class Utils:
                 'OSSAccessKeyId': accessKeyId,
                 'success_action_status': '200',
                 'signature': signature,
-                'file': ('blob', open(picSrc, 'rb'), 'image/jpg')
+                'file': ('blob',
+                open(os.path.join(os.path.dirname(__file__),'../',picSrc), 'rb'),
+                'image/jpg')
             })
         headers['Content-Type'] = multipart_encoder.content_type
         env.session.post(url=policyHost,
@@ -181,3 +187,39 @@ class Utils:
                                verify=False)
         photoUrl = res.json().get('datas')
         return photoUrl
+
+    # 利用hook判断当前返回的状态码是否正常
+    @staticmethod
+    def checkStatus(request, *args, **kwargs):
+        if request.status_code == 418:
+            raise Exception('418错误,当前IP地址已被今日校园封禁')
+    @staticmethod
+    def DESEncrypt(s, key='b3L26XNL'):
+        key = key
+        iv = b"\x01\x02\x03\x04\x05\x06\x07\x08"
+        k = des(key, CBC, iv, pad=None, padmode=PAD_PKCS5)
+        encrypt_str = k.encrypt(s)
+        return base64.b64encode(encrypt_str).decode()
+    @staticmethod
+    def createHeaders(host,userInfo):
+        extension = {
+            "lon": userInfo['lon'],
+            "model": "MI 6",
+            "appVersion": "9.0.12",
+            "systemVersion": "8.0.0",
+            "userId": userInfo['username'],
+            "systemName": "android",
+            "lat": userInfo['lat'],
+            "deviceId": str(uuid.uuid1())
+        }
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Linux; Android 8.0.0; MI 6 Build/OPR1.170623.027; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/92.0.4515.131 Mobile Safari/537.36 okhttp/3.12.4 cpdaily/9.0.12 wisedu/9.0.12',
+            'CpdailyStandAlone': '0',
+            'extension': '1',
+            'Cpdaily-Extension': Utils.DESEncrypt(json.dumps(extension)),
+            'Content-Type': 'application/json; charset=utf-8',
+            'Accept-Encoding': 'gzip',
+            'Host': re.findall('//(.*?)/', host)[0],
+            'Connection': 'Keep-Alive'
+        }
+        return headers

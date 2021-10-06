@@ -1,15 +1,16 @@
 import re
 import requests
 from urllib3.exceptions import InsecureRequestWarning
-from login.casLogin import casLogin
-from login.iapLogin import iapLogin
+from actions.casLogin import casLogin
+from actions.iapLogin import iapLogin
+from actions.Utils import Utils
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 
 class wiseLoginService:
     # 初始化本地登录类
-    def __init__(self, userInfo):
+    def __init__(self, userInfo, httpProxy):
         if None == userInfo['username'] or '' == userInfo[
                 'username'] or None == userInfo['password'] or '' == userInfo[
                     'password'] or None == userInfo[
@@ -21,9 +22,18 @@ class wiseLoginService:
         self.session = requests.session()
         headers = {
             'User-Agent':
-            'Mozilla/5.0 (Linux; U; Android 8.1.0; zh-cn; BLA-AL00 Build/HUAWEIBLA-AL00) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/57.0.2987.132 MQQBrowser/8.9 Mobile Safari/537.36',
+            'Mozilla/5.0 (Linux; Android 8.0.0; MI 6 Build/OPR1.170623.027; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/92.0.4515.131 Mobile Safari/537.36 okhttp/3.12.4',
         }
         self.session.headers = headers
+        self.session.hooks['response'].append(Utils.checkStatus)
+        self.session.adapters.DEFAULT_RETRIES = 5
+        if httpProxy != '':
+            Utils.log('全局代理已启用')
+            self.session.proxies = {
+                'http': httpProxy,
+                'https': httpProxy
+            }
+        self.session.hooks['response'].append(Utils.checkStatus)
         self.login_url = ''
         self.campus_host = ''
         self.login_host = ''

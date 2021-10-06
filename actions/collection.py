@@ -1,10 +1,6 @@
-import base64
 import json
-import re
-import uuid
-from pyDes import PAD_PKCS5, des, CBC
-from login.Utils import Utils
-from login.wiseLoginService import wiseLoginService
+from actions.Utils import Utils
+from actions.wiseLoginService import wiseLoginService
 
 
 class Collection:
@@ -59,7 +55,8 @@ class Collection:
     # 填写表单
     def fillForm(self):
         index = 0
-        onlyRequired = self.userInfo['onlyRequired'] if 'onlyRequired' in self.userInfo else 1
+        onlyRequired = self.userInfo[
+            'onlyRequired'] if 'onlyRequired' in self.userInfo else 1
         for formItem in self.form[:]:
             if onlyRequired == 1:
                 if not formItem['isRequired']:
@@ -122,28 +119,6 @@ class Collection:
 
     # 提交表单
     def submitForm(self):
-        extension = {
-            "model": "OPPO R11 Plus",
-            "appVersion": "8.2.14",
-            "systemVersion": "9.1.0",
-            "userId": self.userInfo['username'],
-            "systemName": "android",
-            "lon": self.userInfo['lon'],
-            "lat": self.userInfo['lat'],
-            "deviceId": str(uuid.uuid1())
-        }
-
-        headers = {
-            'User-Agent': self.session.headers['User-Agent'],
-            'CpdailyStandAlone': '0',
-            'extension': '1',
-            'Cpdaily-Extension': self.DESEncrypt(json.dumps(extension)),
-            'Content-Type': 'application/json; charset=utf-8',
-            # 请注意这个应该和配置文件中的host保持一致
-            'Host': re.findall('//(.*?)/', self.host)[0],
-            'Connection': 'Keep-Alive',
-            'Accept-Encoding': 'gzip'
-        }
         params = {
             "formWid": self.formWid,
             "address": self.userInfo['address'],
@@ -156,15 +131,8 @@ class Collection:
         }
         submitUrl = f'{self.host}wec-counselor-collector-apps/stu/collector/submitForm'
         data = self.session.post(submitUrl,
-                                 headers=headers,
+                                 headers=Utils.createHeaders(
+                                     self.host, self.userInfo),
                                  data=json.dumps(params),
                                  verify=False).json()
         return data['message']
-
-    # DES加密
-    def DESEncrypt(self, content):
-        key = 'b3L26XNL'
-        iv = b"\x01\x02\x03\x04\x05\x06\x07\x08"
-        k = des(key, CBC, iv, pad=None, padmode=PAD_PKCS5)
-        encrypt_str = k.encrypt(content)
-        return base64.b64encode(encrypt_str).decode()

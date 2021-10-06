@@ -1,9 +1,6 @@
-import base64
 import json
-import re
-import uuid
-from pyDes import PAD_PKCS5, des, CBC
-from login.wiseLoginService import wiseLoginService
+from actions.Utils import Utils
+from actions.wiseLoginService import wiseLoginService
 
 
 # 教师工作日志类
@@ -93,36 +90,8 @@ class workLog:
                     pass
                 formItem.pop('fieldItems')
 
-    # DES加密
-    def DESEncrypt(self, s, key='b3L26XNL'):
-        key = key
-        iv = b"\x01\x02\x03\x04\x05\x06\x07\x08"
-        k = des(key, CBC, iv, pad=None, padmode=PAD_PKCS5)
-        encrypt_str = k.encrypt(s)
-        return base64.b64encode(encrypt_str).decode()
-
     # 地点签到
     def submitSign(self, fieldWid, worklogWid):
-        extension = {
-            "lon": self.userInfo['lon'],
-            "model": "OPPO R11 Plus",
-            "appVersion": "8.1.14",
-            "systemVersion": "4.4.4",
-            "userId": self.userInfo['username'],
-            "systemName": "android",
-            "lat": self.userInfo['lat'],
-            "deviceId": str(uuid.uuid1())
-        }
-        headers = {
-            'User-Agent': self.session.headers['User-Agent'],
-            'CpdailyStandAlone': '0',
-            'extension': '1',
-            'Cpdaily-Extension': self.DESEncrypt(json.dumps(extension)),
-            'Content-Type': 'application/json; charset=utf-8',
-            'Accept-Encoding': 'gzip',
-            'Host': re.findall('//(.*?)/', self.host)[0],
-            'Connection': 'Keep-Alive'
-        }
         url = f'{self.host}wec-counselor-worklog-apps/worklog/sign/submitSign'
         params = {
             "fieldWid": fieldWid,
@@ -133,7 +102,8 @@ class workLog:
         }
         res = self.session.post(url,
                                 data=json.dumps(params),
-                                headers=headers,
+                                headers=Utils.createHeaders(
+                                    self.host, self.userInfo),
                                 verify=False).json()
         if res['message'] == 'SUCCESS':
             url = f'{self.host}wec-counselor-worklog-apps/worklog/detail'

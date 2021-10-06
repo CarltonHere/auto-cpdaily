@@ -1,10 +1,6 @@
-import base64
 import json
-import re
-import uuid
-from pyDes import des, CBC, PAD_PKCS5
-from login.Utils import Utils
-from login.wiseLoginService import wiseLoginService
+from actions.Utils import Utils
+from actions.wiseLoginService import wiseLoginService
 
 
 class AutoSign:
@@ -119,40 +115,12 @@ class AutoSign:
         self.form['uaIsCpadaily'] = True
         self.form['signVersion'] = '1.0.0'
 
-    # DES加密
-    def DESEncrypt(self, s, key='b3L26XNL'):
-        key = key
-        iv = b"\x01\x02\x03\x04\x05\x06\x07\x08"
-        k = des(key, CBC, iv, pad=None, padmode=PAD_PKCS5)
-        encrypt_str = k.encrypt(s)
-        return base64.b64encode(encrypt_str).decode()
-
     # 提交签到信息
     def submitForm(self):
-        extension = {
-            "lon": self.userInfo['lon'],
-            "model": "OPPO R11 Plus",
-            "appVersion": "8.1.14",
-            "systemVersion": "4.4.4",
-            "userId": self.userInfo['username'],
-            "systemName": "android",
-            "lat": self.userInfo['lat'],
-            "deviceId": str(uuid.uuid1())
-        }
-        headers = {
-            'User-Agent': self.session.headers['User-Agent'],
-            'CpdailyStandAlone': '0',
-            'extension': '1',
-            'Cpdaily-Extension': self.DESEncrypt(json.dumps(extension)),
-            'Content-Type': 'application/json; charset=utf-8',
-            'Accept-Encoding': 'gzip',
-            'Host': re.findall('//(.*?)/', self.host)[0],
-            'Connection': 'Keep-Alive'
-        }
         # print(json.dumps(self.form))
         res = self.session.post(
             f'{self.host}wec-counselor-sign-apps/stu/sign/submitSign',
-            headers=headers,
+            headers=Utils.createHeaders(self.host, self.userInfo),
             data=json.dumps(self.form),
             verify=False).json()
         return res['message']

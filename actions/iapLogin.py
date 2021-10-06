@@ -1,7 +1,7 @@
 import json
 import requests
 from urllib3.exceptions import InsecureRequestWarning
-from login.Utils import Utils
+from actions.Utils import Utils
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
