@@ -17,6 +17,8 @@ import os
 from pyDes import des, CBC, PAD_PKCS5
 import re
 import uuid
+import hashlib
+import urllib.parse
 
 
 class Utils:
@@ -43,22 +45,16 @@ class Utils:
 
     # aes加密的实现
     @staticmethod
-    def encryptAES(password, key):
-        randStrLen = 64
-        randIvLen = 16
-        ranStr = Utils.randString(randStrLen)
-        ivStr = Utils.randString(randIvLen)
+    def encryptAES(data, key):
+        ivStr = '\x01\x02\x03\x04\x05\x06\x07\x08\t\x01\x02\x03\x04\x05\x06\x07'
         aes = AES.new(bytes(key, encoding='utf-8'), AES.MODE_CBC,
                       bytes(ivStr, encoding="utf8"))
-        data = ranStr + password
-
         text_length = len(data)
         amount_to_pad = AES.block_size - (text_length % AES.block_size)
         if amount_to_pad == 0:
             amount_to_pad = AES.block_size
         pad = chr(amount_to_pad)
         data = data + pad * amount_to_pad
-
         text = aes.encrypt(bytes(data, encoding='utf-8'))
         text = base64.encodebytes(text)
         text = text.decode('utf-8').strip()
@@ -161,14 +157,20 @@ class Utils:
         }
         multipart_encoder = MultipartEncoder(
             fields={  # 这里根据需要进行参数格式设置
-                'key': fileName,
-                'policy': policy,
-                'OSSAccessKeyId': accessKeyId,
-                'success_action_status': '200',
-                'signature': signature,
+                'key':
+                fileName,
+                'policy':
+                policy,
+                'OSSAccessKeyId':
+                accessKeyId,
+                'success_action_status':
+                '200',
+                'signature':
+                signature,
                 'file': ('blob',
-                open(os.path.join(os.path.dirname(__file__),'../',picSrc), 'rb'),
-                'image/jpg')
+                         open(
+                             os.path.join(os.path.dirname(__file__), '../',
+                                          picSrc), 'rb'), 'image/jpg')
             })
         headers['Content-Type'] = multipart_encoder.content_type
         env.session.post(url=policyHost,
@@ -193,6 +195,7 @@ class Utils:
     def checkStatus(request, *args, **kwargs):
         if request.status_code == 418:
             raise Exception('418错误,当前IP地址已被今日校园封禁')
+
     @staticmethod
     def DESEncrypt(s, key='b3L26XNL'):
         key = key
@@ -200,26 +203,51 @@ class Utils:
         k = des(key, CBC, iv, pad=None, padmode=PAD_PKCS5)
         encrypt_str = k.encrypt(s)
         return base64.b64encode(encrypt_str).decode()
+
     @staticmethod
-    def createHeaders(host,userInfo):
+    def md5(str):
+        md5 = hashlib.md5()
+        md5.update(str.encode("utf8"))
+        return md5.hexdigest()
+
+    @staticmethod
+    def submitFormData(env):
         extension = {
-            "lon": userInfo['lon'],
+            "lon": env.userInfo['lon'],
             "model": "MI 6",
             "appVersion": "9.0.12",
             "systemVersion": "8.0.0",
-            "userId": userInfo['username'],
+            "userId": env.userInfo['username'],
             "systemName": "android",
-            "lat": userInfo['lat'],
+            "lat": env.userInfo['lat'],
             "deviceId": str(uuid.uuid1())
         }
         headers = {
-            'User-Agent': 'Mozilla/5.0 (Linux; Android 8.0.0; MI 6 Build/OPR1.170623.027; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/92.0.4515.131 Mobile Safari/537.36 okhttp/3.12.4 cpdaily/9.0.12 wisedu/9.0.12',
+            'User-Agent':
+            'Mozilla/5.0 (Linux; Android 8.0.0; MI 6 Build/OPR1.170623.027; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/92.0.4515.131 Mobile Safari/537.36 okhttp/3.12.4 cpdaily/9.0.12 wisedu/9.0.12',
             'CpdailyStandAlone': '0',
             'extension': '1',
             'Cpdaily-Extension': Utils.DESEncrypt(json.dumps(extension)),
             'Content-Type': 'application/json; charset=utf-8',
             'Accept-Encoding': 'gzip',
-            'Host': re.findall('//(.*?)/', host)[0],
+            'Host': re.findall('//(.*?)/', env.host)[0],
             'Connection': 'Keep-Alive'
         }
-        return headers
+        Utils.log('正在加密表单数据')
+        formData = {
+            'version':
+            'first_v2',
+            'calVersion':
+            'firstv',
+            'bodyString':
+            Utils.encryptAES(json.dumps(env.submitData), 'ytUQ7l2ZZu8mLvJZ'),
+            'sign':
+            Utils.md5(
+                urllib.parse.urlencode(env.submitData) + "&ytUQ7l2ZZu8mLvJZ")
+        }
+        formData.update(extension)
+        Utils.log('正在尝试提交数据')
+        return env.session.post(env.host + env.submitApi,
+                                headers=headers,
+                                data=json.dumps(formData),
+                                verify=False)

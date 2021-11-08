@@ -86,7 +86,8 @@ class casLogin:
             if not salt:
                 params['password'] = self.password
             else:
-                params['password'] = Utils.encryptAES(self.password, salt)
+                params['password'] = Utils.encryptAES(
+                    Utils.randString(64) + self.password, salt)
             if self.getNeedCaptchaUrl():
                 if self.type == 0:
                     imgUrl = self.host + 'authserver/captcha.html'

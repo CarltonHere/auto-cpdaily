@@ -13,13 +13,14 @@ class Collection:
         self.collectWid = None
         self.formWid = None
         self.schoolTaskWid = None
+        self.instanceWid = None
 
     # 查询表单
     def queryForm(self):
         headers = self.session.headers
         headers['Content-Type'] = 'application/json'
         queryUrl = f'{self.host}wec-counselor-collector-apps/stu/collector/queryCollectorProcessingList'
-        params = {'pageSize': 20, "pageNumber": 1}
+        params = {"pageSize": 20, "pageNumber": 1}
         res = self.session.post(queryUrl,
                                 data=json.dumps(params),
                                 headers=headers,
@@ -30,13 +31,16 @@ class Collection:
             if item['isHandled'] == 0:
                 self.collectWid = item['wid']
                 self.formWid = item['formWid']
+                self.instanceWid = item['instanceWid']
         if (self.formWid == None):
             raise Exception('当前暂时没有未完成的信息收集哦！')
         detailUrl = f'{self.host}wec-counselor-collector-apps/stu/collector/detailCollector'
         res = self.session.post(detailUrl,
                                 headers=headers,
-                                data=json.dumps(
-                                    {'collectorWid': self.collectWid}),
+                                data=json.dumps({
+                                    "collectorWid": self.collectWid,
+                                    "instanceWid": self.instanceWid
+                                }),
                                 verify=False).json()
         self.schoolTaskWid = res['datas']['collector']['schoolTaskWid']
         getFormUrl = f'{self.host}wec-counselor-collector-apps/stu/collector/getFormFields'
@@ -44,7 +48,8 @@ class Collection:
             "pageSize": 100,
             "pageNumber": 1,
             "formWid": self.formWid,
-            "collectorWid": self.collectWid
+            "collectorWid": self.collectWid,
+            "instanceWid": self.instanceWid
         }
         res = self.session.post(getFormUrl,
                                 headers=headers,
@@ -119,20 +124,17 @@ class Collection:
 
     # 提交表单
     def submitForm(self):
-        params = {
+        self.submitData = {
             "formWid": self.formWid,
             "address": self.userInfo['address'],
             "collectWid": self.collectWid,
+            "instanceWid": self.instanceWid,
             "schoolTaskWid": self.schoolTaskWid,
             "form": self.form,
             "uaIsCpadaily": True,
             "latitude": self.userInfo['lat'],
             'longitude': self.userInfo['lon']
         }
-        submitUrl = f'{self.host}wec-counselor-collector-apps/stu/collector/submitForm'
-        data = self.session.post(submitUrl,
-                                 headers=Utils.createHeaders(
-                                     self.host, self.userInfo),
-                                 data=json.dumps(params),
-                                 verify=False).json()
-        return data['message']
+        self.submitApi = 'wec-counselor-collector-apps/stu/collector/submitForm'
+        res = Utils.submitFormData(self).json()
+        return res['message']

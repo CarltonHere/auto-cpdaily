@@ -29,10 +29,7 @@ class wiseLoginService:
         self.session.adapters.DEFAULT_RETRIES = 5
         if httpProxy != '':
             Utils.log('全局代理已启用')
-            self.session.proxies = {
-                'http': httpProxy,
-                'https': httpProxy
-            }
+            self.session.proxies = {'http': httpProxy, 'https': httpProxy}
         self.session.hooks['response'].append(Utils.checkStatus)
         self.login_url = ''
         self.campus_host = ''

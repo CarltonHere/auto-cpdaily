@@ -118,9 +118,7 @@ class AutoSign:
     # 提交签到信息
     def submitForm(self):
         # print(json.dumps(self.form))
-        res = self.session.post(
-            f'{self.host}wec-counselor-sign-apps/stu/sign/submitSign',
-            headers=Utils.createHeaders(self.host, self.userInfo),
-            data=json.dumps(self.form),
-            verify=False).json()
+        self.submitData = self.form
+        self.submitApi = 'wec-counselor-sign-apps/stu/sign/submitSign'
+        res = Utils.submitFormData(self).json()
         return res['message']
