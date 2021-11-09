@@ -111,12 +111,14 @@ class casLogin:
         elif data.status_code == 200 or data.status_code == 401:
             data = data.text
             soup = BeautifulSoup(data, 'lxml')
-            if self.type == 0:
+            if len(soup.select('#errorMsg')) > 0:
                 msg = soup.select('#errorMsg')[0].get_text()
-            elif self.type == 1:
+            elif len(soup.select('#formErrorTip2')) > 0:
                 msg = soup.select('#formErrorTip2')[0].get_text()
-            elif self.type == 2:
+            elif len(soup.select('#msg')) > 0:
                 msg = soup.select('#msg')[0].get_text()
+            else:
+                msg = 'CAS登陆失败,意料之外的错误!'
             raise Exception(msg)
         else:
             raise Exception('CAS登陆失败！返回状态码：' + str(data.status_code))
