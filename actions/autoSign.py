@@ -13,13 +13,14 @@ class AutoSign:
         self.task = None
         self.form = {}
         self.fileName = None
+        self.apis = Utils.getApis(userInfo['type'])
 
     # 获取未签到的任务
     def getUnSignTask(self):
         headers = self.session.headers
         headers['Content-Type'] = 'application/json'
         # 第一次请求接口获取cookies（MOD_AUTH_CAS）
-        url = f'{self.host}wec-counselor-sign-apps/stu/sign/getStuSignInfosInOneDay'
+        url = self.host + self.apis[0]
         self.session.post(url,
                           headers=headers,
                           data=json.dumps({}),
@@ -42,7 +43,7 @@ class AutoSign:
 
     # 获取具体的签到任务详情
     def getDetailTask(self):
-        url = f'{self.host}wec-counselor-sign-apps/stu/sign/detailSignInstance'
+        url = self.host + self.apis[1]
         headers = self.session.headers
         headers['Content-Type'] = 'application/json'
         res = self.session.post(url,
@@ -55,11 +56,14 @@ class AutoSign:
     def fillForm(self):
         # 判断签到是否需要照片
         if self.task['isPhoto'] == 1:
-            Utils.uploadPicture(self, 'sign', self.userInfo['photo'])
-            self.form['signPhotoUrl'] = Utils.getPictureUrl(self, 'sign')
+            Utils.uploadPicture(self, self.apis[3], self.userInfo['photo'])
+            self.form['signPhotoUrl'] = Utils.getPictureUrl(self, self.apis[4])
         else:
             self.form['signPhotoUrl'] = ''
-        self.form['isNeedExtra'] = self.task['isNeedExtra']
+        if 'isNeedExtra' in self.task:
+            self.form['isNeedExtra'] = self.task['isNeedExtra']
+        else:
+            self.task['isNeedExtra'] = 0
         if self.task['isNeedExtra'] == 1:
             extraFields = self.task['extraField']
             userItems = self.userInfo['forms']
@@ -119,6 +123,6 @@ class AutoSign:
     def submitForm(self):
         # print(json.dumps(self.form))
         self.submitData = self.form
-        self.submitApi = 'wec-counselor-sign-apps/stu/sign/submitSign'
+        self.submitApi = self.apis[2]
         res = Utils.submitFormData(self).json()
         return res['message']

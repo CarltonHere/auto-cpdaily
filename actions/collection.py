@@ -14,12 +14,13 @@ class Collection:
         self.formWid = None
         self.schoolTaskWid = None
         self.instanceWid = None
+        self.apis = Utils.getApis(userInfo['type'])
 
     # 查询表单
     def queryForm(self):
         headers = self.session.headers
         headers['Content-Type'] = 'application/json'
-        queryUrl = f'{self.host}wec-counselor-collector-apps/stu/collector/queryCollectorProcessingList'
+        queryUrl = self.host + self.apis[0]
         params = {"pageSize": 20, "pageNumber": 1}
         res = self.session.post(queryUrl,
                                 data=json.dumps(params),
@@ -34,7 +35,7 @@ class Collection:
                 self.instanceWid = item['instanceWid']
         if (self.formWid == None):
             raise Exception('当前暂时没有未完成的信息收集哦！')
-        detailUrl = f'{self.host}wec-counselor-collector-apps/stu/collector/detailCollector'
+        detailUrl = self.host + self.apis[1]
         res = self.session.post(detailUrl,
                                 headers=headers,
                                 data=json.dumps({
@@ -43,7 +44,7 @@ class Collection:
                                 }),
                                 verify=False).json()
         self.schoolTaskWid = res['datas']['collector']['schoolTaskWid']
-        getFormUrl = f'{self.host}wec-counselor-collector-apps/stu/collector/getFormFields'
+        getFormUrl = self.host + self.apis[2]
         params = {
             "pageSize": 100,
             "pageNumber": 1,
@@ -116,8 +117,8 @@ class Collection:
                     raise Exception(f'\r\n第{index + 1}个配置项的选项不正确,该选项为必填多选')
                 formItem['value'] = ','.join(tempValue)
             elif formItem['fieldType'] == '4':
-                Utils.uploadPicture(self, 'collector', userForm['value'])
-                formItem['value'] = Utils.getPictureUrl(self, 'collector')
+                Utils.uploadPicture(self, self.apis[4], userForm['value'])
+                formItem['value'] = Utils.getPictureUrl(self, self.apis[5])
             else:
                 raise Exception(f'\r\n第{index + 1}个配置项的类型未适配')
             index += 1
@@ -135,6 +136,6 @@ class Collection:
             "latitude": self.userInfo['lat'],
             'longitude': self.userInfo['lon']
         }
-        self.submitApi = 'wec-counselor-collector-apps/stu/collector/submitForm'
+        self.submitApi = self.apis[3]
         res = Utils.submitFormData(self).json()
         return res['message']

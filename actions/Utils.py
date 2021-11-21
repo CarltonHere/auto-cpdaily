@@ -139,8 +139,8 @@ class Utils:
 
     # 上传图片到阿里云oss
     @staticmethod
-    def uploadPicture(env, type, picSrc):
-        url = f'{env.host}wec-counselor-{type}-apps/stu/oss/getUploadPolicy'
+    def uploadPicture(env, api, picSrc):
+        url = env.host + api
         res = env.session.post(url=url,
                                headers={'content-type': 'application/json'},
                                data=json.dumps({'fileType': 1}),
@@ -180,8 +180,8 @@ class Utils:
 
     # 获取图片上传位置
     @staticmethod
-    def getPictureUrl(env, type):
-        url = f'{env.host}wec-counselor-{type}-apps/stu/{type}/previewAttachment'
+    def getPictureUrl(env, api):
+        url = env.host + api
         params = {'ossKey': env.fileName}
         res = env.session.post(url=url,
                                headers={'content-type': 'application/json'},
@@ -251,3 +251,38 @@ class Utils:
                                 headers=headers,
                                 data=json.dumps(formData),
                                 verify=False)
+
+    @staticmethod
+    def getApis(type):
+        apis = [
+            [
+                'wec-counselor-collector-apps/stu/collector/queryCollectorProcessingList',
+                'wec-counselor-collector-apps/stu/collector/detailCollector',
+                'wec-counselor-collector-apps/stu/collector/getFormFields',
+                'wec-counselor-collector-apps/stu/collector/submitForm',
+                'wec-counselor-collector-apps/stu/oss/getUploadPolicy',
+                'wec-counselor-collector-apps/stu/collector/previewAttachment'
+            ],
+            [
+                'wec-counselor-sign-apps/stu/sign/getStuSignInfosInOneDay',
+                'wec-counselor-sign-apps/stu/sign/detailSignInstance',
+                'wec-counselor-sign-apps/stu/sign/submitSign',
+                'wec-counselor-sign-apps/stu/oss/getUploadPolicy',
+                'wec-counselor-sign-apps/stu/sign/previewAttachment'
+            ],
+            [
+                'wec-counselor-attendance-apps/student/attendance/getStuAttendacesInOneDay',
+                'wec-counselor-attendance-apps/student/attendance/detailSignInstance',
+                'wec-counselor-attendance-apps/student/attendance/submitSign',
+                'wec-counselor-sign-apps/stu/oss/getUploadPolicy',
+                'wec-counselor-sign-apps/stu/sign/previewAttachment'
+            ],
+            [
+                'wec-counselor-teacher-sign-apps/teacher/sign/getTeacherSignInfosInOneDay',
+                'wec-counselor-teacher-sign-apps/teacher/sign/detailSignInstance',
+                'wec-counselor-teacher-sign-apps/teacher/sign/submitSign',
+                'wec-counselor-teacher-sign-apps/teacher/oss/getUploadPolicy',
+                'wec-counselor-teacher-sign-apps/teacher/sign/previewAttachment'
+            ]
+        ]
+        return apis[type]

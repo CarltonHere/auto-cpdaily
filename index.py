@@ -3,7 +3,6 @@ from actions.wiseLoginService import wiseLoginService
 from actions.autoSign import AutoSign
 from actions.collection import Collection
 from actions.workLog import workLog
-from actions.sleepCheck import sleepCheck
 from actions.pushKit import pushKit
 from actions.Utils import Utils
 from time import sleep
@@ -67,7 +66,7 @@ def working(user, httpProxy):
         sleep(1)
         msg = collection.submitForm()
         return msg
-    elif user['user']['type'] == 1:
+    elif user['user']['type'] in [1,2,3]:
         # 以下代码是签到的代码
         Utils.log('开始执行签到任务')
         sign = AutoSign(wise, user['user'])
@@ -78,18 +77,7 @@ def working(user, httpProxy):
         sleep(1)
         msg = sign.submitForm()
         return msg
-    elif user['user']['type'] == 2:
-        # 以下代码是查寝的代码
-        Utils.log('开始执行查寝任务')
-        check = sleepCheck(wise, user['user'])
-        check.getUnSignedTasks()
-        sleep(1)
-        check.getDetailTask()
-        check.fillForm()
-        sleep(1)
-        msg = check.submitForm()
-        return msg
-    elif user['user']['type'] == 3:
+    elif user['user']['type'] == 4:
         # 以下代码是工作日志的代码
         Utils.log('开始执行日志任务')
         work = workLog(wise, user['user'])
