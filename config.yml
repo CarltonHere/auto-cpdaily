@@ -9,7 +9,7 @@ Version: 1.7.0
 # 特别提示：调试完成后请记得将debug改为false
 debug: False
 # 消息推送配置，method 0 为禁用 1 为webApi模式 2 为本地smtp模式 3 为qmsg模式(qq号模式)
-# 消息推送配置，method 4 为qmsg模式(qq群模式) method 5 为企业微信模式
+# 消息推送配置，method 4 为qmsg模式(qq群模式) method 5 为企业微信模式 method 6 为Server酱模式
 notifyOption:
     method: 0
     #############配置1-4选填一个即可
@@ -29,6 +29,9 @@ notifyOption:
         corpid: ''
         corpsecret: ''
         agentid: ''
+    #############5 Server酱的Key请在下方rcvAcc处填写
+    serverChanOption:
+        baseUrl: 'https://sctapi.ftqq.com/'
 # 默认不填，如需使用先开通腾讯云OCR服务，再申请API密钥
 ocrOption:
     SecretId: 'APIid'
