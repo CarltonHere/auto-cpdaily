@@ -22,7 +22,7 @@
  - Linux环境可以直接使用下方命令一键部署
 	
 	```
-	curl -sSO https://gitee.com/icarlton/auto-cpdaily/raw/gh-pages/setup.sh && bash setup.sh
+	curl -sSO https://raw.fastgit.org/CarltonHere/auto-cpdaily/gh-pages/setup.sh && bash setup.sh
 	```
 
 #### 📅示例 腾讯云函数平台
@@ -45,7 +45,7 @@
  - 在编辑器上方的菜单栏中，选择`终端`>`新终端`，将下方命令粘贴到弹出的终端中并回车，等待初始化环境完成，可能需要较长时间，请耐心等待(如长时间没反应可以按下`CTRL`+`C`键强制终止，然后再次尝试)
 	
 	```
-	curl -sSO https://gitee.com/icarlton/auto-cpdaily/raw/gh-pages/setup.sh && bash setup.sh
+	curl -sSO https://raw.fastgit.org/CarltonHere/auto-cpdaily/gh-pages/setup.sh && bash setup.sh
 	```
 	
  - 在编辑器左边的`src`目录下选择`config.yml`，配置你的用户签到信息，注意删除多余的示例并注意每行行首的缩进
