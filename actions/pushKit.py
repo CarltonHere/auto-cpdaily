@@ -41,6 +41,8 @@ class pushKit:
             return self.sendMsgByQmsg({'type': 1, 'id': rcvAcc}, title, msg)
         if method == 5:
             return self.sendMsgByQyWx(rcvAcc, title, msg)
+        if method == 6:
+            return self.sendMsgByServerChan(rcvAcc, title, msg)
 
         return '推送参数配置错误,已取消发送！'
 
@@ -152,4 +154,16 @@ class pushKit:
         else:
             return '企业微信应用配置错误,请检查qywxOption'
 
+    #Server酱推送
+    def sendMsgByServerChan(self, key, title, msg):
+        if self.option['serverChanOption']['baseUrl'] == '':
+            return 'Server酱的baseUrl为空,设置baseUrl后才能发送邮件'
+        url = '{}{}.send'.format(self.option['serverChanOption']['baseUrl'], key)
+        params = {'title':title, 'desp':msg}
+        res = requests.post(url, params=params).json()
+        if res['code'] == 0:
+            return 'Server酱推送成功'
+        else:
+            return 'Server酱推送失败,' + res['message']
+        
     # 其他通知方式待添加
