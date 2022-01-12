@@ -54,6 +54,7 @@
 #### 🔐进阶使用
 
 - 如需推送提醒服务，请在`config.yml`顶部的`notifyOption`参数中进行配置
+- 如需忽略必填题目，请在`form`下新增`ignore: True`字段
 - 如需验证码识别需要先[开通腾讯OCR服务](https://console.cloud.tencent.com/ocr/overview)，然后[申请腾讯云API密钥](https://console.cloud.tencent.com/cam/capi)，最后将API密钥配置到路径`config.yml`里的`SecretId`以及`SecretKey`参数内
 
 ### 🔧常见问题

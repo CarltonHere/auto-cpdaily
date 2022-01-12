@@ -77,6 +77,15 @@ class Collection:
                     raise Exception(
                         f'\r\n第{index + 1}个配置项的标题不正确\r\n您的标题为：[{userForm["title"]}]\r\n系统的标题为：[{formItem["title"]}]'
                     )
+            # 忽略用户指定题目
+            if 'ignore' in userForm and userForm['ignore']:
+                    # 设置显示为false
+                    formItem['show'] = False
+                    # 清空所有的选项
+                    if 'fieldItems' in formItem:
+                        formItem['fieldItems'].clear()
+                    index += 1
+                    continue
             # 文本选项直接赋值
             if formItem['fieldType'] in ['1', '5', '6', '7']:
                 formItem['value'] = userForm['value']

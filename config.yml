@@ -2,7 +2,7 @@
 # 本项目的源代码在MPL2.0协议下发布，同时附加以下条目：                            #
 # 非商业性使用 — 不得将此项目及其衍生的项目的源代码和二进制产品用于任何商业和盈利用途#
 ###############################################################################
-Version: 1.7.0
+Version: 1.7.1
 # 调试模式，用于寻找错误出现的坐标，默认为false
 # 特别提示：调试完成后请记得将debug改为false
 # 特别提示：调试完成后请记得将debug改为false
@@ -14,7 +14,7 @@ notifyOption:
     method: 0
     #############配置1-4选填一个即可
     #############1 webApi配置,根据不同api可能需要自行修改推送模块
-    mailApiUrl: ''
+    mailApiUrl: 'http://api.ruoli.cc/mail/sendMail'
     #############2 发信方邮箱账号密码,smtp服务器qq邮箱为smtp.qq.com,163邮箱为smtp.163.com
     smtpOption:
         userName: ''
@@ -134,6 +134,7 @@ users:
             - form:
                   title: 下午体温
                   value: '36.2'
+                  ignore: True
             - form:
                   title: 晚上体温
                   value: '36.5'

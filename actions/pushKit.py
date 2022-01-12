@@ -53,7 +53,7 @@ class pushKit:
         if self.option['mailApiUrl'] == '':
             return '邮件API为空,设置邮件API后才能发送邮件'
         # 以下部分需要根据不同接口自行修改
-        params = {'reciever': mail, 'title': title, 'content': msg}
+        params = {'recipient': mail, 'title': title, 'content': msg}
         res = requests.post(url=self.option['mailApiUrl'],
                             params=params).json()
         return "邮箱API%s" % (res['message'])
@@ -94,7 +94,7 @@ class pushKit:
             server.sendmail(from_addr, to_addr, msg.as_string())
             # 关闭服务器
             server.quit()
-        except Exception as e:  #如果try中的语句没有执行，则会执行下面的ret=False
+        except Exception as e:  # 如果try中的语句没有执行，则会执行下面的ret=False
             ret = "SMTP邮件发送失败,%s" % (e)
         return ret
 
@@ -116,7 +116,7 @@ class pushKit:
         else:
             return 'QMSG推送失败,' + res['reason']
 
-    #企业微信应用推送
+    # 企业微信应用推送
     def sendMsgByQyWx(self, rcvAcc, title, message):
         wxConfig = self.option['qywxOption']
 
@@ -154,16 +154,17 @@ class pushKit:
         else:
             return '企业微信应用配置错误,请检查qywxOption'
 
-    #Server酱推送
+    # Server酱推送
     def sendMsgByServerChan(self, key, title, msg):
         if self.option['serverChanOption']['baseUrl'] == '':
             return 'Server酱的baseUrl为空,设置baseUrl后才能发送邮件'
-        url = '{}{}.send'.format(self.option['serverChanOption']['baseUrl'], key)
-        params = {'title':title, 'desp':msg}
+        url = '{}{}.send'.format(
+            self.option['serverChanOption']['baseUrl'], key)
+        params = {'title': title, 'desp': msg}
         res = requests.post(url, params=params).json()
         if res['code'] == 0:
             return 'Server酱推送成功'
         else:
             return 'Server酱推送失败,' + res['message']
-        
+
     # 其他通知方式待添加
