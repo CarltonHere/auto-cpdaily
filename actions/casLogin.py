@@ -28,7 +28,7 @@ class casLogin:
         if self.type == 0:
             url = self.host + 'authserver/needCaptcha.html' + '?username=' + self.username
             flag = self.session.get(url, verify=False).text
-            return 'false' != flag and 'False' != flag
+            return 'false' != flag[:5] and 'False' != flag[:5]
         else:
             url = self.host + 'authserver/checkNeedCaptcha.htl' + '?username=' + self.username
             flag = self.session.get(url, verify=False).json()
