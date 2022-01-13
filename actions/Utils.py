@@ -46,7 +46,7 @@ class Utils:
     # aes加密的实现
     @staticmethod
     def encryptAES(data, key):
-        ivStr = '\x01\x02\x03\x04\x05\x06\x07\x08\t\x01\x02\x03\x04\x05\x06\x07'
+        ivStr = '\x01\x02\x03\x04\x05\x06\x07\x08\x09\x01\x02\x03\x04\x05\x06\x07'
         aes = AES.new(bytes(key, encoding='utf-8'), AES.MODE_CBC,
                       bytes(ivStr, encoding="utf8"))
         text_length = len(data)
