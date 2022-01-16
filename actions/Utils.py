@@ -197,7 +197,7 @@ class Utils:
             raise Exception('418错误,当前IP地址已被今日校园封禁')
 
     @staticmethod
-    def DESEncrypt(s, key='b3L26XNL'):
+    def DESEncrypt(s, key='XCE927=='):
         key = key
         iv = b"\x01\x02\x03\x04\x05\x06\x07\x08"
         k = des(key, CBC, iv, pad=None, padmode=PAD_PKCS5)
@@ -215,7 +215,7 @@ class Utils:
         extension = {
             "lon": env.userInfo['lon'],
             "model": "MI 6",
-            "appVersion": "9.0.12",
+            "appVersion": "9.0.14",
             "systemVersion": "8.0.0",
             "userId": env.userInfo['username'],
             "systemName": "android",
@@ -224,7 +224,7 @@ class Utils:
         }
         headers = {
             'User-Agent':
-            'Mozilla/5.0 (Linux; Android 8.0.0; MI 6 Build/OPR1.170623.027; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/92.0.4515.131 Mobile Safari/537.36 okhttp/3.12.4 cpdaily/9.0.12 wisedu/9.0.12',
+            'Mozilla/5.0 (Linux; Android 8.0.0; MI 6 Build/OPR1.170623.027; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/92.0.4515.131 Mobile Safari/537.36 okhttp/3.12.4 cpdaily/9.0.14 wisedu/9.0.14',
             'CpdailyStandAlone': '0',
             'extension': '1',
             'Cpdaily-Extension': Utils.DESEncrypt(json.dumps(extension)),
@@ -234,16 +234,17 @@ class Utils:
             'Connection': 'Keep-Alive'
         }
         Utils.log('正在加密表单数据')
+        bodyString = Utils.encryptAES(
+            json.dumps(env.submitData), 'SASEoK4Pa5d4SssO')
+        env.submitData['bodyString'] = bodyString
+        print(env.submitData)
         formData = {
             'version':
-            'first_v2',
+            'first_v3',
             'calVersion':
             'firstv',
-            'bodyString':
-            Utils.encryptAES(json.dumps(env.submitData), 'ytUQ7l2ZZu8mLvJZ'),
-            'sign':
-            Utils.md5(
-                urllib.parse.urlencode(env.submitData) + "&ytUQ7l2ZZu8mLvJZ")
+            'bodyString': bodyString,
+            'sign': Utils.md5(urllib.parse.urlencode(env.submitData) + "&SASEoK4Pa5d4SssO")
         }
         formData.update(extension)
         Utils.log('正在尝试提交数据')
