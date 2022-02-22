@@ -237,7 +237,7 @@ class Utils:
         bodyString = Utils.encryptAES(
             json.dumps(env.submitData), 'SASEoK4Pa5d4SssO')
         env.submitData['bodyString'] = bodyString
-        print(env.submitData)
+        # print(env.submitData)
         formData = {
             'version':
             'first_v3',

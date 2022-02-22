@@ -79,13 +79,14 @@ class Collection:
                     )
             # 忽略用户指定题目
             if 'ignore' in userForm and userForm['ignore']:
-                    # 设置显示为false
-                    formItem['show'] = False
-                    # 清空所有的选项
-                    if 'fieldItems' in formItem:
-                        formItem['fieldItems'].clear()
-                    index += 1
-                    continue
+                formItem['value'] = None
+                # 设置显示为false
+                formItem['show'] = False
+                # 清空所有的选项
+                if 'fieldItems' in formItem:
+                    formItem['fieldItems'].clear()
+                index += 1
+                continue
             # 文本选项直接赋值
             if formItem['fieldType'] in ['1', '5', '6', '7']:
                 formItem['value'] = userForm['value']
