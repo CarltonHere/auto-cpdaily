@@ -4,7 +4,7 @@ from actions.autoSign import AutoSign
 from actions.collection import Collection
 from actions.workLog import workLog
 from actions.pushKit import pushKit
-from actions.Utils import Utils
+from actions.utils import Utils
 from time import sleep
 
 

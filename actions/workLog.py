@@ -1,5 +1,5 @@
 import json
-from actions.Utils import Utils
+from actions.utils import Utils
 from actions.wiseLoginService import wiseLoginService
 
 

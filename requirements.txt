@@ -8,3 +8,4 @@ pyDes==2.0.1
 PyYAML==5.4.1
 lxml>=4.6.2
 rsa==4.7.2
+apprise>=0.9.7

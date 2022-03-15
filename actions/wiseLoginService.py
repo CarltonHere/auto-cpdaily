@@ -3,7 +3,7 @@ import requests
 from urllib3.exceptions import InsecureRequestWarning
 from actions.casLogin import casLogin
 from actions.iapLogin import iapLogin
-from actions.Utils import Utils
+from actions.utils import Utils
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 

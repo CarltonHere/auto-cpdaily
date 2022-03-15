@@ -2,36 +2,17 @@
 # 本项目的源代码在MPL2.0协议下发布，同时附加以下条目：                            #
 # 非商业性使用 — 不得将此项目及其衍生的项目的源代码和二进制产品用于任何商业和盈利用途#
 ###############################################################################
-Version: 1.8.1
 # 调试模式，用于寻找错误出现的坐标，默认为false
 # 特别提示：调试完成后请记得将debug改为false
 # 特别提示：调试完成后请记得将debug改为false
 # 特别提示：调试完成后请记得将debug改为false
 debug: False
-# 消息推送配置，method 0 为禁用 1 为webApi模式 2 为本地smtp模式 3 为qmsg模式(qq号模式)
-# 消息推送配置，method 4 为qmsg模式(qq群模式) method 5 为企业微信模式 method 6 为Server酱模式
+# 消息推送配置，method 0 为禁用 1 为webApi模式 2 为APPRISE模式，请参考https://github.com/caronc/apprise/wiki
 notifyOption:
     method: 0
     #############配置1-4选填一个即可
     #############1 webApi配置,根据不同api可能需要自行修改推送模块
     mailApiUrl: 'http://api.ruoli.cc/mail/sendMail'
-    #############2 发信方邮箱账号密码,smtp服务器qq邮箱为smtp.qq.com,163邮箱为smtp.163.com
-    smtpOption:
-        userName: ''
-        passWord: ''
-        server: 'smtp.163.com'
-    #############3 完善qmsgKey即可,需要完善-user字段中qId参数，详见下方例子
-    qmsgOption:
-        key: ''
-        baseUrl: 'https://qmsg.zendee.cn/'
-    #############4 企业微信配置
-    qywxOption:
-        corpid: ''
-        corpsecret: ''
-        agentid: ''
-    #############5 Server酱的Key请在下方rcvAcc处填写
-    serverChanOption:
-        baseUrl: 'https://sctapi.ftqq.com/'
 # 默认不填，如需使用先开通腾讯云OCR服务，再申请API密钥
 ocrOption:
     SecretId: 'APIid'
@@ -60,8 +41,10 @@ users:
         notifyOption: 
             # method和顶部参数一致，不填默认按照顶部参数执行
             # method: 0
-            # rcvAcc为接受消息的账号，可以为Email账号、QQ号、或者是企业微信ID(@all为全体)
-            rcvAcc: ''
+            # rcvOption为接受消息的配置，method为1时直接填写邮箱即可，method为2时请参考
+            # https://github.com/caronc/apprise/wiki进行配置
+            # 示例'mailto://邮箱账号:邮箱密码@邮箱名.com'
+            rcvOption: 'mailto://账号:密码@163.com'
         # 附上经纬度查询地址（请自行选择自己的学校地址，address，lon，lat都要填查询到的）：http://api.map.baidu.com/lbsapi/getpoint/index.html
         # lon 经度
         lon: 104.616858
@@ -109,8 +92,10 @@ users:
         notifyOption: 
             # method和顶部参数一致，不填默认按照顶部参数执行
             # method: 0
-            # rcvAcc为接受消息的账号，可以为Email账号、QQ号、或者是企业微信ID(@all为全体)
-            rcvAcc: ''
+            # rcvOption为接受消息的配置，method为1时直接填写邮箱即可，method为2时请参考
+            # https://github.com/caronc/apprise/wiki进行配置
+            # 示例'mailto://邮箱账号:邮箱密码@邮箱名.com'
+            rcvOption: 'mailto://账号:密码@163.com'
         # 附上经纬度查询地址（请自行选择自己的学校地址，address，lon，lat都要填查询到的）：http://api.map.baidu.com/lbsapi/getpoint/index.html
         # 经纬度信息
         lon: 104.6191824
@@ -161,8 +146,10 @@ users:
         notifyOption: 
             # method和顶部参数一致，不填默认按照顶部参数执行
             # method: 0
-            # rcvAcc为接受消息的账号，可以为Email账号、QQ号、或者是企业微信ID(@all为全体)
-            rcvAcc: ''
+            # rcvOption为接受消息的配置，method为1时直接填写邮箱即可，method为2时请参考
+            # https://github.com/caronc/apprise/wiki进行配置
+            # 示例'mailto://邮箱账号:邮箱密码@邮箱名.com'
+            rcvOption: 'mailto://账号:密码@163.com'
         # 附上经纬度查询地址（请自行选择自己的学校地址，address，lon，lat都要填查询到的）：http://api.map.baidu.com/lbsapi/getpoint/index.html
         # lon 经度
         lon: 114.244845
@@ -204,8 +191,10 @@ users:
         notifyOption: 
             # method和顶部参数一致，不填默认按照顶部参数执行
             # method: 0
-            # rcvAcc为接受消息的账号，可以为Email账号、QQ号、或者是企业微信ID(@all为全体)
-            rcvAcc: ''
+            # rcvOption为接受消息的配置，method为1时直接填写邮箱即可，method为2时请参考
+            # https://github.com/caronc/apprise/wiki进行配置
+            # 示例'mailto://邮箱账号:邮箱密码@邮箱名.com'
+            rcvOption: 'mailto://账号:密码@163.com'
         # 附上经纬度查询地址（请自行选择自己的学校地址，address，lon，lat都要填查询到的）：http://api.map.baidu.com/lbsapi/getpoint/index.html
         # lon 经度
         lon: 105.895856

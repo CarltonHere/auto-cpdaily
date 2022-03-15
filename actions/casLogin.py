@@ -3,7 +3,7 @@ import requests
 import urllib.parse
 from bs4 import BeautifulSoup
 from urllib3.exceptions import InsecureRequestWarning
-from actions.Utils import Utils
+from actions.utils import Utils
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 

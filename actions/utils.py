@@ -40,8 +40,9 @@ class Utils:
         file = open(yaml_file, 'r', encoding="utf-8")
         file_data = file.read()
         file.close()
-        config = yaml.load(file_data, Loader=yaml.FullLoader)
-        return dict(config)
+        config = dict(yaml.load(file_data, Loader=yaml.FullLoader))
+        config['Version'] = '1.8.2'
+        return config
 
     # aes加密的实现
     @staticmethod
