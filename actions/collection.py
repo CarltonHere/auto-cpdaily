@@ -69,7 +69,10 @@ class Collection:
                     # 移除非必填选项
                     self.form.remove(formItem)
                     continue
-            userForm = self.userInfo['forms'][index]['form']
+            try:
+                userForm = self.userInfo['forms'][index]['form']
+            except:
+                raise Exception('请检查forms配置是否正确！')
             # 判断用户是否需要检查标题
             if self.userInfo['checkTitle'] == 1:
                 # 如果检查到标题不相等

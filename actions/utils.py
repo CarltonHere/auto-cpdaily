@@ -41,7 +41,7 @@ class Utils:
         file_data = file.read()
         file.close()
         config = dict(yaml.load(file_data, Loader=yaml.FullLoader))
-        config['Version'] = '1.8.2'
+        config['Version'] = '1.8.3'
         return config
 
     # aes加密的实现
@@ -262,7 +262,7 @@ class Utils:
                 'wec-counselor-collector-apps/stu/collector/detailCollector',
                 'wec-counselor-collector-apps/stu/collector/getFormFields',
                 'wec-counselor-collector-apps/stu/collector/submitForm',
-                'wec-counselor-collector-apps/stu/oss/getUploadPolicy',
+                'wec-counselor-collector-apps/stu/obs/getUploadPolicy',
                 'wec-counselor-collector-apps/stu/collector/previewAttachment'
             ],
             [
