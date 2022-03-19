@@ -41,7 +41,7 @@ class Utils:
         file_data = file.read()
         file.close()
         config = dict(yaml.load(file_data, Loader=yaml.FullLoader))
-        config['Version'] = '1.8.3'
+        config['Version'] = '1.8.5'
         return config
 
     # aes加密的实现
@@ -158,20 +158,8 @@ class Utils:
         }
         multipart_encoder = MultipartEncoder(
             fields={  # 这里根据需要进行参数格式设置
-                'key':
-                fileName,
-                'policy':
-                policy,
-                'OSSAccessKeyId':
-                accessKeyId,
-                'success_action_status':
-                '200',
-                'signature':
-                signature,
-                'file': ('blob',
-                         open(
-                             os.path.join(os.path.dirname(__file__), '../',
-                                          picSrc), 'rb'), 'image/jpg')
+                'key': fileName, 'policy': policy, 'AccessKeyId': accessKeyId, 'signature': signature, 'x-obs-acl': 'public-read',
+                'file': ('blob', open(os.path.join(os.path.dirname(__file__), '../', picSrc), 'rb'), 'image/jpg')
             })
         headers['Content-Type'] = multipart_encoder.content_type
         env.session.post(url=policyHost,
@@ -269,14 +257,14 @@ class Utils:
                 'wec-counselor-sign-apps/stu/sign/getStuSignInfosInOneDay',
                 'wec-counselor-sign-apps/stu/sign/detailSignInstance',
                 'wec-counselor-sign-apps/stu/sign/submitSign',
-                'wec-counselor-sign-apps/stu/oss/getUploadPolicy',
+                'wec-counselor-sign-apps/stu/obs/getUploadPolicy',
                 'wec-counselor-sign-apps/stu/sign/previewAttachment'
             ],
             [
                 'wec-counselor-attendance-apps/student/attendance/getStuAttendacesInOneDay',
                 'wec-counselor-attendance-apps/student/attendance/detailSignInstance',
                 'wec-counselor-attendance-apps/student/attendance/submitSign',
-                'wec-counselor-sign-apps/stu/oss/getUploadPolicy',
+                'wec-counselor-sign-apps/stu/obs/getUploadPolicy',
                 'wec-counselor-sign-apps/stu/sign/previewAttachment'
             ],
             [

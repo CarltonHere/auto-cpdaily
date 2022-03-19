@@ -10,7 +10,6 @@ debug: False
 # 消息推送配置，method 0 为禁用 1 为webApi模式 2 为APPRISE模式，请参考https://github.com/caronc/apprise/wiki
 notifyOption:
     method: 0
-    #############配置1-4选填一个即可
     #############1 webApi配置,根据不同api可能需要自行修改推送模块
     mailApiUrl: 'http://api.ruoli.cc/mail/sendMail'
 # 默认不填，如需使用先开通腾讯云OCR服务，再申请API密钥
@@ -43,7 +42,9 @@ users:
             # method: 0
             # rcvOption为接受消息的配置，method为1时直接填写邮箱即可，method为2时请参考
             # https://github.com/caronc/apprise/wiki进行配置
-            # 示例'mailto://邮箱账号:邮箱密码@邮箱名.com'
+            # 示例1 'mailto://邮箱账号:邮箱密码@邮箱名.com' --- 'mailto://账号:密码@163.com'
+            # 示例2 'mailto://发信邮箱账号:发信邮箱密码@发信邮箱名.com/?to=收信人邮箱'  --- 'mailto://账号:密码@163.com/to=收信邮箱@qq.com'
+            # 注意！！！一部分邮箱（如163邮箱）需要在设置中申请smtp授权码，此处的邮箱密码填写授权码
             rcvOption: 'mailto://账号:密码@163.com'
         # 附上经纬度查询地址（请自行选择自己的学校地址，address，lon，lat都要填查询到的）：http://api.map.baidu.com/lbsapi/getpoint/index.html
         # lon 经度
@@ -94,10 +95,12 @@ users:
             # method: 0
             # rcvOption为接受消息的配置，method为1时直接填写邮箱即可，method为2时请参考
             # https://github.com/caronc/apprise/wiki进行配置
-            # 示例'mailto://邮箱账号:邮箱密码@邮箱名.com'
+            # 示例1 'mailto://邮箱账号:邮箱密码@邮箱名.com' --- 'mailto://账号:密码@163.com'
+            # 示例2 'mailto://发信邮箱账号:发信邮箱密码@发信邮箱名.com/?to=收信人邮箱'  --- 'mailto://账号:密码@163.com/to=收信邮箱@qq.com'
+            # 注意！！！一部分邮箱（如163邮箱）需要在设置中申请smtp授权码，此处的邮箱密码填写授权码
             rcvOption: 'mailto://账号:密码@163.com'
         # 附上经纬度查询地址（请自行选择自己的学校地址，address，lon，lat都要填查询到的）：http://api.map.baidu.com/lbsapi/getpoint/index.html
-        # 经纬度信息
+        # lon 经度
         lon: 104.6191824
         # 经纬度信息
         lat: 28.800613
@@ -148,7 +151,9 @@ users:
             # method: 0
             # rcvOption为接受消息的配置，method为1时直接填写邮箱即可，method为2时请参考
             # https://github.com/caronc/apprise/wiki进行配置
-            # 示例'mailto://邮箱账号:邮箱密码@邮箱名.com'
+            # 示例1 'mailto://邮箱账号:邮箱密码@邮箱名.com' --- 'mailto://账号:密码@163.com'
+            # 示例2 'mailto://发信邮箱账号:发信邮箱密码@发信邮箱名.com/?to=收信人邮箱'  --- 'mailto://账号:密码@163.com/to=收信邮箱@qq.com'
+            # 注意！！！一部分邮箱（如163邮箱）需要在设置中申请smtp授权码，此处的邮箱密码填写授权码
             rcvOption: 'mailto://账号:密码@163.com'
         # 附上经纬度查询地址（请自行选择自己的学校地址，address，lon，lat都要填查询到的）：http://api.map.baidu.com/lbsapi/getpoint/index.html
         # lon 经度
@@ -193,7 +198,9 @@ users:
             # method: 0
             # rcvOption为接受消息的配置，method为1时直接填写邮箱即可，method为2时请参考
             # https://github.com/caronc/apprise/wiki进行配置
-            # 示例'mailto://邮箱账号:邮箱密码@邮箱名.com'
+            # 示例1 'mailto://邮箱账号:邮箱密码@邮箱名.com' --- 'mailto://账号:密码@163.com'
+            # 示例2 'mailto://发信邮箱账号:发信邮箱密码@发信邮箱名.com/?to=收信人邮箱'  --- 'mailto://账号:密码@163.com/to=收信邮箱@qq.com'
+            # 注意！！！一部分邮箱（如163邮箱）需要在设置中申请smtp授权码，此处的邮箱密码填写授权码
             rcvOption: 'mailto://账号:密码@163.com'
         # 附上经纬度查询地址（请自行选择自己的学校地址，address，lon，lat都要填查询到的）：http://api.map.baidu.com/lbsapi/getpoint/index.html
         # lon 经度
