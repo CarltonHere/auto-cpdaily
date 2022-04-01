@@ -53,8 +53,19 @@
 
 #### 🔐进阶使用
 
-- 如需推送提醒服务，请在`config.yml`顶部的`notifyOption`参数中进行配置
-- 如需忽略必填题目，请在`form`下新增`ignore: True`字段
+- 如需推送提醒服务，请在`config.yml`顶部的`notifyOption`中配置模式，然后在每个用户的`rcvOption`中配置APPRISE参数即可，推荐使用APPRISE推送模式，该模式支持邮箱、钉钉、ServerChan等推送渠道，更多信息请访问[APPRISE项目维基](https://github.com/caronc/apprise/wiki)。篇幅有限，只演示配置邮箱推送：
+	```
+	users:
+    - user:
+		notifyOption: 
+			# 首先配置推送模式为2，即APPRISE推送模式
+			method: 2
+			# 然后配置APPRISE参数，填写您的邮箱账号和密码
+			# 此处需要注意，qq、163等邮箱平台需要使用smtp授权码代替密码
+			# 末尾的'?to=收信人邮箱'如果省略则默认发给自己
+			rcvOption: 'mailto://smtp账号:smtp密码@163.com/?to=收信人邮箱'
+	```
+- 如需忽略必填题目，请在`form`下新增`ignore: True`字段，请您注意题目要求留空的，请将`form`下的`value`字段按照`value: ""`这种方式设置，`ignore: True`主要用于隐藏题目，错误的隐藏必填项会导致签到异常！
 - 如需验证码识别需要先[开通腾讯OCR服务](https://console.cloud.tencent.com/ocr/overview)，然后[申请腾讯云API密钥](https://console.cloud.tencent.com/cam/capi)，最后将API密钥配置到路径`config.yml`里的`SecretId`以及`SecretKey`参数内
 
 ### 🔧常见问题

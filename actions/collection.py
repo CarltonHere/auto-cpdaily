@@ -130,8 +130,18 @@ class Collection:
                     raise Exception(f'\r\n第{index + 1}个配置项的选项不正确,该选项为必填多选')
                 formItem['value'] = ','.join(tempValue)
             elif formItem['fieldType'] == '4':
-                Utils.uploadPicture(self, self.apis[4], userForm['value'])
-                formItem['value'] = Utils.getPictureUrl(self, self.apis[5])
+                dirList = list(userForm['value'])
+                # 检查列表长度
+                dirListLen = len(dirList)
+                if dirListLen > 10 or dirListLen == 0:
+                    raise Exception(f'\r\n第{index + 1}个配置项配置的图片数量({dirListLen})不符合要求')
+                # 将列表中的每一项都加入到value中
+                imgUrlList = []
+                for i, pic in enumerate(dirList, 1):
+                    fileName = Utils.uploadPicture(self, self.apis[4], pic)
+                    imgUrl = Utils.getPictureUrl(self, self.apis[5], fileName)
+                    imgUrlList.append(imgUrl)
+                formItem['value'] = ",".join(imgUrlList)
             else:
                 raise Exception(f'\r\n第{index + 1}个配置项的类型未适配')
             index += 1

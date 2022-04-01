@@ -41,7 +41,7 @@ class Utils:
         file_data = file.read()
         file.close()
         config = dict(yaml.load(file_data, Loader=yaml.FullLoader))
-        config['Version'] = '1.8.5'
+        config['Version'] = '1.8.6'
         return config
 
     # aes加密的实现
@@ -147,7 +147,7 @@ class Utils:
                                data=json.dumps({'fileType': 1}),
                                verify=False)
         datas = res.json().get('datas')
-        fileName = datas.get('fileName')
+        fileName = datas.get('fileName')+".jpg"
         policy = datas.get('policy')
         accessKeyId = datas.get('accessid')
         signature = datas.get('signature')
@@ -165,13 +165,13 @@ class Utils:
         env.session.post(url=policyHost,
                          headers=headers,
                          data=multipart_encoder)
-        env.fileName = fileName
+        return fileName
 
     # 获取图片上传位置
     @staticmethod
-    def getPictureUrl(env, api):
+    def getPictureUrl(env, api, fileName):
         url = env.host + api
-        params = {'ossKey': env.fileName}
+        params = {'ossKey': fileName}
         res = env.session.post(url=url,
                                headers={'content-type': 'application/json'},
                                data=json.dumps(params),

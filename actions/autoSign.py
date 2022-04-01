@@ -56,8 +56,8 @@ class AutoSign:
     def fillForm(self):
         # 判断签到是否需要照片
         if self.task['isPhoto'] == 1:
-            Utils.uploadPicture(self, self.apis[3], self.userInfo['photo'])
-            self.form['signPhotoUrl'] = Utils.getPictureUrl(self, self.apis[4])
+            fileName = Utils.uploadPicture(self, self.apis[3], self.userInfo['photo'])
+            self.form['signPhotoUrl'] = Utils.getPictureUrl(self, self.apis[4], fileName)
         else:
             self.form['signPhotoUrl'] = ''
         if 'isNeedExtra' in self.task:
