@@ -1,8 +1,6 @@
 ## 欢迎使用今日校园自动化
 
-今日校园自动化是一个基于Python的爬虫项目，主要实现今日校园签到、信息收集、查寝等循环表单的自动化任务
-
-该项目是由[ZimoLoveShuang/auto-submit](https://github.com/ZimoLoveShuang/auto-submit)仓库和[thriving123/f*kTodayStudy](https://github.com/thriving123/fuckTodayStudy)仓库基础上发展而来，请自行前往STAR，我们感谢原作者的努力与付出。
+今日校园自动化是一个基于Python的爬虫项目，能够实现今日校园签到、信息收集、查寝等循环表单的自动化工作
 
 ### 📃免责声明
 
@@ -12,7 +10,7 @@
 
 #### 🔑常规部署
 
- - 安装Python3.6+环境
+ - 安装Python3.7+环境
  - 下载并解压项目代码包
  - 修改`config.yml`文件中的相关配置内容
  - 运行`pip install -r requirements.txt -t ./ -i https://mirrors.aliyun.com/pypi/simple`安装项目依赖
@@ -28,7 +26,7 @@
 #### 📅示例 腾讯云函数平台
 
  - 打开百度搜索[腾讯云函数](https://console.cloud.tencent.com/scf/index?rid=1)，注册认证后，进入控制台。
- - 点左边的函数服务，新建云函数，名称随意，运行环境选择`python3.6`，创建方式选择`自定义创建`
+ - 点左边的函数服务，新建云函数，名称随意，运行环境选择`python3.7`，创建方式选择`自定义创建`
  - 在`高级配置`中配置`执行超时时间`60秒，在`触发器配置`中选择自定义创建，`触发周期`选择自定义触发，配置cron表达式
 	
 	```
@@ -53,7 +51,8 @@
 
 #### 🔐进阶使用
 
-- 如需推送提醒服务，请在`config.yml`顶部的`notifyOption`中配置模式，然后在每个用户的`rcvOption`中配置APPRISE参数即可，推荐使用APPRISE推送模式，该模式支持邮箱、钉钉、ServerChan等推送渠道，更多信息请访问[APPRISE项目维基](https://github.com/caronc/apprise/wiki)。篇幅有限，只演示配置邮箱推送：
+ - 如需推送提醒服务，请在`config.yml`顶部的`notifyOption`中配置模式，然后在每个用户的`rcvOption`中配置APPRISE参数即可，推荐使用APPRISE推送模式，该模式支持邮箱、钉钉、ServerChan等推送渠道，更多信息请访问[APPRISE项目维基](https://github.com/caronc/apprise/wiki)。篇幅有限，只演示配置邮箱推送：
+	
 	```
 	users:
     - user:
@@ -65,18 +64,30 @@
 			# 末尾的'?to=收信人邮箱'如果省略则默认发给自己
 			rcvOption: 'mailto://smtp账号:smtp密码@163.com/?to=收信人邮箱'
 	```
+	
 - 如需忽略必填题目，请在`form`下新增`ignore: True`字段，请您注意题目要求留空的，请将`form`下的`value`字段按照`value: ""`这种方式设置，`ignore: True`主要用于隐藏题目，错误的隐藏必填项会导致签到异常！
 - 如需验证码识别需要先[开通腾讯OCR服务](https://console.cloud.tencent.com/ocr/overview)，然后[申请腾讯云API密钥](https://console.cloud.tencent.com/cam/capi)，最后将API密钥配置到路径`config.yml`里的`SecretId`以及`SecretKey`参数内
 
 ### 🔧常见问题
 
-- 如果云函数报错`HTTP-418`请更换云函数其他地区节点
-- 使用过程中报错`No module named 'XXXXX'`请重新安装依赖
-- 请注意`config.yml`中每行参数的缩进位置，不然会产生错误
+ - 如果云函数报错`HTTP-418`请更换云函数其他地区节点
+ - 使用过程中报错`No module named 'XXXXX'`请重新安装依赖
+ - 请注意`config.yml`中每行参数的缩进位置，不然会产生错误
 
 ### 👨‍👨‍👦‍👦参与贡献
 
 欢迎各位同学通过PR或者ISSUES的方式直接参与到项目中来，请注意反馈BUG需提供完整日志！
+ - 将`config.yml`顶部的`debug`配置的值改为`True`即可开启调试模式，请注意调试完成后还原为配置的值为`False`
+
+### ❤️同类作品
+
+感谢同类项目的存在，让社区能够相互学习和进步，请自行前往Star，我们感谢他们所做的贡献！
+
+ - [ZimoLoveShuang/auto-submit](https://github.com/ZimoLoveShuang/auto-submit)
+ - [thriving123/f*kTodayStudy](https://github.com/thriving123/fuckTodayStudy)
+ - [IceTiki/ruoli-sign-optimization](https://github.com/IceTiki/ruoli-sign-optimization)
+ - [windowsair/fzu-cpDailySign](https://github.com/windowsair/fzu-cpDailySign)
+ - [ceajs/cea](https://github.com/ceajs/cea)
 
 ### 📜许可证
 
