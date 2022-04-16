@@ -1,5 +1,6 @@
 import requests
 import apprise
+import json
 
 
 # 消息通知聚合类
@@ -33,6 +34,8 @@ class pushKit:
             return self.sendMsgByMailApi(rcvOption, title, msg)
         if method == 2:
             return self.sendMsgByOther(rcvOption, title, msg)
+        if method == 3: 
+            return self.sendMsgServer(rcvOption, title, msg)
 
         return '推送参数配置错误,已取消发送！'
 
@@ -60,3 +63,19 @@ class pushKit:
             return "APPRISE推送消息成功"
         else:
             return "APPRISE推送消息失败"
+
+    # 发送Serve酱消息 接入Server酱平台，可实现微信平台的消息推送 链接：https://sct.ftqq.com/login
+    def sendMsgServer(self, rcvOption, title, msg):
+        sendurl = "https://sctapi.ftqq.com/" + rcvOption + ".send?title=" + msg + "&desp=" + msg
+        r = requests.get(sendurl)
+        result = r.content.decode('UTF-8')
+        dict = json.loads(result)
+        statu = dict["data"]["error"]
+        if statu == "SUCCESS":
+            return "消息已推送"
+        else:
+            # 各种错误信息由于未遇到过暂时不做处理
+            return "消息推送失败"
+
+
+
