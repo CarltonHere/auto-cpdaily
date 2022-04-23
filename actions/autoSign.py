@@ -33,9 +33,14 @@ class AutoSign:
         if len(res['datas']['unSignedTasks']) < 1:
             if len(res['datas']['leaveTasks']) < 1:
                 raise Exception('当前暂时没有未签到的任务哦！')
-            latestTask = res['datas']['leaveTasks'][0]
+            latestTasks = res['datas']['leaveTasks']
         else:
-            latestTask = res['datas']['unSignedTasks'][0]
+            latestTasks = res['datas']['unSignedTasks']
+        latestTask = latestTasks[0]
+        if "formTitle" in self.userInfo:
+            for formItem in latestTasks:
+                if self.userInfo["formTitle"] == formItem['taskName']:
+                    latestTask = formItem
         self.taskInfo = {
             'signInstanceWid': latestTask['signInstanceWid'],
             'signWid': latestTask['signWid']

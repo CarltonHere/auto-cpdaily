@@ -33,6 +33,11 @@ class Collection:
                 self.collectWid = item['wid']
                 self.formWid = item['formWid']
                 self.instanceWid = item['instanceWid']
+            if "formTitle" in self.userInfo:
+                if self.userInfo["formTitle"] == item["subject"]:
+                    self.collectWid = item['wid']
+                    self.formWid = item['formWid']
+                    self.instanceWid = item['instanceWid']
         if (self.formWid == None):
             raise Exception('当前暂时没有未完成的信息收集哦！')
         detailUrl = self.host + self.apis[1]
@@ -134,7 +139,8 @@ class Collection:
                 # 检查列表长度
                 dirListLen = len(dirList)
                 if dirListLen > 10 or dirListLen == 0:
-                    raise Exception(f'\r\n第{index + 1}个配置项配置的图片数量({dirListLen})不符合要求')
+                    raise Exception(
+                        f'\r\n第{index + 1}个配置项配置的图片数量({dirListLen})不符合要求')
                 # 将列表中的每一项都加入到value中
                 imgUrlList = []
                 for i, pic in enumerate(dirList, 1):
@@ -143,7 +149,8 @@ class Collection:
                     imgUrlList.append(imgUrl)
                 formItem['value'] = ",".join(imgUrlList)
             else:
-                raise Exception(f'\r\n第{index + 1}个配置项的类型未适配')
+                raise Exception(
+                    f'\r\n第{index + 1}个配置项的类型{formItem.fieldType}未适配')
             index += 1
 
     # 提交表单

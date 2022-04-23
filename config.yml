@@ -39,14 +39,17 @@ users:
             # rcvOption为接受消息的配置，method为1时直接填写邮箱即可，method为2时请参考
             # https://github.com/caronc/apprise/wiki进行配置
             # 示例1 规则: 'mailto://邮箱账号:邮箱密码@邮箱名.com' 示范: 'mailto://账号:密码@163.com'
-            # 示例2 规则: 'mailto://发信邮箱账号:发信邮箱密码@发信邮箱名.com/?to=收信人邮箱' 示范: 'mailto://账号:密码@163.com/to=收信邮箱@qq.com'
+            # 示例2 规则: 'mailto://发信邮箱账号:发信邮箱密码@发信邮箱名.com/?to=收信人邮箱' 示范: 'mailto://账号:密码@163.com/?to=收信邮箱@qq.com'
             # 注意！！！一部分邮箱（如163邮箱）需要在设置中申请smtp授权码，此处的邮箱密码填写授权码
+            # 账号是邮箱@符号前的部分，比如admin@163.com的用户名就是admin
             rcvOption: 'mailto://账号:密码@163.com'
         # 附上经纬度查询地址（请自行选择自己的学校地址，address，lon，lat都要填查询到的）：http://api.map.baidu.com/lbsapi/getpoint/index.html
         # lon 经度
         lon: 104.616858
         # lat 纬度
         lat: 28.793022
+        # 可以指定签到任务
+        # formTitle: "2月31日每日签到"
         # 是否检查表单的标题（1代表检查，0代表不检查）
         checkTitle: 1
         # 表单信息
@@ -92,14 +95,17 @@ users:
             # rcvOption为接受消息的配置，method为1时直接填写邮箱即可，method为2时请参考
             # https://github.com/caronc/apprise/wiki进行配置
             # 示例1 规则: 'mailto://邮箱账号:邮箱密码@邮箱名.com' 示范: 'mailto://账号:密码@163.com'
-            # 示例2 规则: 'mailto://发信邮箱账号:发信邮箱密码@发信邮箱名.com/?to=收信人邮箱' 示范: 'mailto://账号:密码@163.com/to=收信邮箱@qq.com'
+            # 示例2 规则: 'mailto://发信邮箱账号:发信邮箱密码@发信邮箱名.com/?to=收信人邮箱' 示范: 'mailto://账号:密码@163.com/?to=收信邮箱@qq.com'
             # 注意！！！一部分邮箱（如163邮箱）需要在设置中申请smtp授权码，此处的邮箱密码填写授权码
+            # 账号是邮箱@符号前的部分，比如admin@163.com的用户名就是admin
             rcvOption: 'mailto://账号:密码@163.com'
         # 附上经纬度查询地址（请自行选择自己的学校地址，address，lon，lat都要填查询到的）：http://api.map.baidu.com/lbsapi/getpoint/index.html
         # lon 经度
         lon: 104.6191824
         # 经纬度信息
         lat: 28.800613
+        # 可以指定签到任务
+        # formTitle: "2月31日每日签到"
         # 是否检查表单的标题（1代表检查，0代表不检查）
         checkTitle: 1
         # 是否只填必填项
@@ -154,8 +160,9 @@ users:
             # rcvOption为接受消息的配置，method为1时直接填写邮箱即可，method为2时请参考
             # https://github.com/caronc/apprise/wiki进行配置
             # 示例1 规则: 'mailto://邮箱账号:邮箱密码@邮箱名.com' 示范: 'mailto://账号:密码@163.com'
-            # 示例2 规则: 'mailto://发信邮箱账号:发信邮箱密码@发信邮箱名.com/?to=收信人邮箱' 示范: 'mailto://账号:密码@163.com/to=收信邮箱@qq.com'
+            # 示例2 规则: 'mailto://发信邮箱账号:发信邮箱密码@发信邮箱名.com/?to=收信人邮箱' 示范: 'mailto://账号:密码@163.com/?to=收信邮箱@qq.com'
             # 注意！！！一部分邮箱（如163邮箱）需要在设置中申请smtp授权码，此处的邮箱密码填写授权码
+            # 账号是邮箱@符号前的部分，比如admin@163.com的用户名就是admin
             rcvOption: 'mailto://账号:密码@163.com'
         # 附上经纬度查询地址（请自行选择自己的学校地址，address，lon，lat都要填查询到的）：http://api.map.baidu.com/lbsapi/getpoint/index.html
         # lon 经度
@@ -166,6 +173,8 @@ users:
         abnormalReason: ''
         # photo 签到照片，不需要可不填，或者直接删除
         photo: sign.jpg
+        # 可以指定签到任务
+        # formTitle: "2月31日每日签到"
         # 是否检查表单的标题（1代表检查，0代表不检查）
         checkTitle: 1
         # 表单信息
@@ -201,14 +210,17 @@ users:
             # rcvOption为接受消息的配置，method为1时直接填写邮箱即可，method为2时请参考
             # https://github.com/caronc/apprise/wiki进行配置
             # 示例1 规则: 'mailto://邮箱账号:邮箱密码@邮箱名.com' 示范: 'mailto://账号:密码@163.com'
-            # 示例2 规则: 'mailto://发信邮箱账号:发信邮箱密码@发信邮箱名.com/?to=收信人邮箱' 示范: 'mailto://账号:密码@163.com/to=收信邮箱@qq.com'
+            # 示例2 规则: 'mailto://发信邮箱账号:发信邮箱密码@发信邮箱名.com/?to=收信人邮箱' 示范: 'mailto://账号:密码@163.com/?to=收信邮箱@qq.com'
             # 注意！！！一部分邮箱（如163邮箱）需要在设置中申请smtp授权码，此处的邮箱密码填写授权码
+            # 账号是邮箱@符号前的部分，比如admin@163.com的用户名就是admin
             rcvOption: 'mailto://账号:密码@163.com'
         # 附上经纬度查询地址（请自行选择自己的学校地址，address，lon，lat都要填查询到的）：http://api.map.baidu.com/lbsapi/getpoint/index.html
         # lon 经度
         lon: 105.895856
         # lat 纬度
         lat: 32.424037
+        # 可以指定签到任务
+        # formTitle: "2月31日每日签到"
         # abnormalReason 反馈信息（这个一般不用配置，但是不能删除，删除会报错）
         abnormalReason: ''
         # photo 签到照片，不需要可不填，或者直接删除

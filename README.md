@@ -62,11 +62,13 @@
 			# 然后配置APPRISE参数，填写您的邮箱账号和密码
 			# 此处需要注意，qq、163等邮箱平台需要使用smtp授权码代替密码
 			# 末尾的'?to=收信人邮箱'如果省略则默认发给自己
+			# 账号是邮箱地址@符号前的部分，比如admin@163.com的账号为admin
 			rcvOption: 'mailto://smtp账号:smtp密码@163.com/?to=收信人邮箱'
 	```
 	
 - 如需忽略必填题目，请在`form`下新增`ignore: True`字段，请您注意题目要求留空的，请将`form`下的`value`字段按照`value: ""`这种方式设置，`ignore: True`主要用于隐藏题目，错误的隐藏必填项会导致签到异常！
 - 如需验证码识别需要先[开通腾讯OCR服务](https://console.cloud.tencent.com/ocr/overview)，然后[申请腾讯云API密钥](https://console.cloud.tencent.com/cam/capi)，最后将API密钥配置到路径`config.yml`里的`SecretId`以及`SecretKey`参数内
+- 如需指定执行特定的任务表单，请在`user`下新增`formTitle`字段，并配置您要执行的任务表单名称
 
 ### 🔧常见问题
 
@@ -77,7 +79,6 @@
 ### 👨‍👨‍👦‍👦参与贡献
 
 欢迎各位同学通过PR或者ISSUES的方式直接参与到项目中来，请注意反馈BUG需提供完整日志！
- - 将`config.yml`顶部的`debug`配置的值改为`True`即可开启调试模式，请注意调试完成后还原为配置的值为`False`
 
 ### ❤️同类作品
 
