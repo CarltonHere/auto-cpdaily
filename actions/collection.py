@@ -91,7 +91,7 @@ class Collection:
                 index += 1
                 continue
             # 文本选项直接赋值
-            if formItem['fieldType'] in ['1', '5', '6', '7']:
+            if formItem['fieldType'] in ('1', '5', '6', '7', '11'):
                 formItem['value'] = userForm['value']
             # 单选框填充
             elif formItem['fieldType'] == '2':
@@ -129,12 +129,13 @@ class Collection:
                 if len(fieldItems) == 0:
                     raise Exception(f'\r\n第{index + 1}个配置项的选项不正确,该选项为必填多选')
                 formItem['value'] = ','.join(tempValue)
-            elif formItem['fieldType'] == '4':
+            elif formItem['fieldType'] in ('4', '16'):
                 dirList = list(userForm['value'])
                 # 检查列表长度
                 dirListLen = len(dirList)
                 if dirListLen > 10 or dirListLen == 0:
-                    raise Exception(f'\r\n第{index + 1}个配置项配置的图片数量({dirListLen})不符合要求')
+                    raise Exception(
+                        f'\r\n第{index + 1}个配置项配置的图片数量({dirListLen})不符合要求')
                 # 将列表中的每一项都加入到value中
                 imgUrlList = []
                 for i, pic in enumerate(dirList, 1):
