@@ -95,11 +95,14 @@ class Collection:
                     formItem['fieldItems'].clear()
                 index += 1
                 continue
+            formType = formItem['fieldType']
+            if 'forceType' in userForm and userForm['forceType']:
+                formType = userForm['forceType']
             # 文本选项直接赋值
-            if formItem['fieldType'] in ('1', '5', '6', '7', '11'):
+            if formType in ('1', '5', '6', '7', '11', '12'):
                 formItem['value'] = userForm['value']
             # 单选框填充
-            elif formItem['fieldType'] == '2':
+            elif formType == '2':
                 # 单选需要移除多余的选项
                 fieldItems = formItem['fieldItems']
                 for fieldItem in fieldItems[:]:
@@ -116,7 +119,7 @@ class Collection:
                 if len(fieldItems) != 1:
                     raise Exception(f'\r\n第{index + 1}个配置项的选项不正确,该选项为必填单选')
             # 多选填充
-            elif formItem['fieldType'] == '3':
+            elif formType == '3':
                 fieldItems = formItem['fieldItems']
                 userItems = userForm['value'].split('|')
                 tempValue = []
@@ -134,7 +137,7 @@ class Collection:
                 if len(fieldItems) == 0:
                     raise Exception(f'\r\n第{index + 1}个配置项的选项不正确,该选项为必填多选')
                 formItem['value'] = ','.join(tempValue)
-            elif formItem['fieldType'] in ('4', '16'):
+            elif formType in ('4', '16'):
                 dirList = list(userForm['value'])
                 # 检查列表长度
                 dirListLen = len(dirList)

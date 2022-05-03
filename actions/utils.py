@@ -41,7 +41,7 @@ class Utils:
         file_data = file.read()
         file.close()
         config = dict(yaml.load(file_data, Loader=yaml.FullLoader))
-        config['Version'] = '1.8.8'
+        config['Version'] = '1.8.9'
         return config
 
     # aes加密的实现

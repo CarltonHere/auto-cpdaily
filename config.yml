@@ -190,6 +190,20 @@ users:
                 title: 你现在所在地？
                 value: 其他
                 extra: 在家
+            # 如果本题选填，需要留空请设置value为''
+            - form:
+                title: 你现在所在地？
+                value: ''
+            # 如果本题必填，但不打算填写，请设置ignore: True
+            - form:
+                title: 你现在所在地？
+                ignore: True
+            # 强制设置题目类型，不建议使用！
+            - form:
+                title: 你的火星船票票号？
+                forceType: 1
+                value: '2099123101'
+            
     # 第四个用户配置
     # 以下配置为查寝
     # 这里默认仅适配四川信息职业技术学院，其他学校自行修改
