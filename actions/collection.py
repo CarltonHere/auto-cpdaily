@@ -34,7 +34,7 @@ class Collection:
                 self.formWid = item['formWid']
                 self.instanceWid = item['instanceWid']
             if "formTitle" in self.userInfo:
-                if self.userInfo["formTitle"] == item["subject"]:
+                if (item["subject"]).find(self.userInfo["formTitle"]) > -1:
                     self.collectWid = item['wid']
                     self.formWid = item['formWid']
                     self.instanceWid = item['instanceWid']
