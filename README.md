@@ -20,7 +20,7 @@
  - Linux环境可以直接使用下方命令一键部署
 	
 	```
-	curl -sSO https://raw.fastgit.org/CarltonHere/auto-cpdaily/gh-pages/setup.sh && bash setup.sh
+	curl -sSO https://cdn.staticaly.com/gh/CarltonHere/auto-cpdaily/gh-pages/setup.sh && bash setup.sh
 	```
 
 #### 📅示例 腾讯云函数平台
