@@ -10,7 +10,7 @@ Get_Pack_Manager(){
 
 Set_Auto_Cpdaily(){
 	echo "开始下载项目代码"
-	wget --no-check-certificate -O code.zip http://download.fastgit.org/carltonhere/auto-cpdaily/archive/main.zip
+	wget --no-check-certificate -O code.zip http://download.fastgit.xyz/carltonhere/auto-cpdaily/archive/main.zip
 	echo "开始解压项目代码"
 	unzip -o code.zip
 	echo "开始初始化项目依赖"
